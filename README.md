@@ -2,7 +2,12 @@
 
 Laboratório de inteligência industrial construído passo a passo, com Raspberry Pi, Python e apoio de IA no desenvolvimento. A proposta da série é acompanhar o caminho do dado: **processo simulado → comunicação industrial → coleta → histórico e contexto → visualização → análise e diagnóstico**.
 
-Este repositório começa com a **aula inaugural**. É o início do projeto: a ideia é desenvolver um pouco a cada dia, compartilhar os comandos e as decisões e ampliar o laboratório de forma incremental.
+Este repositório reúne as aulas do laboratório. É o início do projeto: a ideia é desenvolver um pouco a cada dia, compartilhar os comandos e as decisões e ampliar o laboratório de forma incremental.
+
+## Aulas
+
+- **Aula 01:** Do zero ao OPC UA com TEP — instruções nesta página e [códigos](aulas/aula-01/).
+- **Aula 02:** [Segmentação de redes e controle de acesso com Raspberry Pi e nftables](aulas/aula-02/).
 
 ## Aula 01 — Do zero ao OPC UA com TEP
 
@@ -16,10 +21,14 @@ Os dois scripts foram copiados do Raspberry Pi e preservados como utilizados na 
 laboratorio-inteligencia-industrial/
 ├── README.md
 └── aulas/
-    └── aula-01/
-        ├── requirements.txt
-        ├── simular_tep.py     # Simulação e leituras no terminal
-        └── servidor_opc.py    # Simulação integrada ao servidor OPC UA
+    ├── aula-01/
+    │   ├── requirements.txt
+    │   ├── simular_tep.py     # Simulação e leituras no terminal
+    │   └── servidor_opc.py    # Simulação integrada ao servidor OPC UA
+    └── aula-02/
+        ├── README.md          # Redes, roteamento e firewall
+        ├── aula02.nft         # Regras adaptáveis do laboratório
+        └── iilab-forward-video.nft # Reconstituição das regras exibidas
 ```
 
 ## Preparar o Raspberry Pi

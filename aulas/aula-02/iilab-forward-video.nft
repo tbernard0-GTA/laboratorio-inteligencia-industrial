@@ -1,0 +1,12 @@
+# Reconstituído a partir da listagem nft exibida na aula; ajuste antes de usar.
+table inet iilab_filter {
+    chain forward {
+        type filter hook forward priority filter; policy drop;
+        ct state invalid counter drop
+        ct state established,related counter accept
+        iifname "wlan0" oifname "eth0" ip saddr 192.168.1.16 ip daddr 10.77.0.10 tcp dport 4840 counter accept comment "OPC UA autorizado"
+        iifname "wlan0" oifname "eth0" ip saddr 192.168.1.16 ip daddr 10.77.0.10 tcp dport 22 counter drop comment "SSH direto bloqueado"
+        iifname "wlan0" oifname "eth0" ip saddr 192.168.1.16 ip daddr 10.77.0.10 ip protocol icmp counter accept comment "ICMP de diagnostico"
+        counter drop comment "Demais encaminhamentos bloqueados"
+    }
+}
