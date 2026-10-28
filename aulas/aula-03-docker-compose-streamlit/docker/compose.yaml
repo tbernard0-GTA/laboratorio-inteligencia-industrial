@@ -1,0 +1,56 @@
+name: iilab-aula03
+services:
+  tep-opc:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      target: server
+    image: iilab-tep-opc:aula03
+    environment:
+      OPC_BIND_HOST: 0.0.0.0
+      OPC_ADVERTISED_ENDPOINT: ${OPC_ADVERTISED_ENDPOINT:?Configure .env}
+    ports:
+      - "${PI4_BIND_IP:?Configure .env}:4840:4840/tcp"
+    networks: [industrial]
+    restart: unless-stopped
+    init: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    healthcheck:
+      test: [CMD, python, opc_client.py, --endpoint, "opc.tcp://127.0.0.1:4840/tep/", --once]
+      interval: 30s
+      timeout: 10s
+      start_period: 45s
+      retries: 3
+    logging:
+      driver: json-file
+      options: {max-size: "5m", max-file: "2"}
+  streamlit:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      target: dashboard
+    image: iilab-streamlit:aula03
+    environment:
+      OPC_ENDPOINT: opc.tcp://tep-opc:4840/tep/
+    ports:
+      - "${PI4_BIND_IP:?Configure .env}:8501:8501/tcp"
+    networks: [industrial]
+    depends_on:
+      tep-opc:
+        condition: service_healthy
+    restart: unless-stopped
+    init: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8501/_stcore/health', timeout=3)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    logging:
+      driver: json-file
+      options: {max-size: "5m", max-file: "2"}
+networks:
+  industrial:
+    driver: bridge

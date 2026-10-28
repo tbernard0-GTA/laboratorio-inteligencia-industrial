@@ -24,3 +24,6 @@ Thumbs.db
 *.log
 *.mp4
 *.mp3
+
+# Ambientes locais de teste
+.venv-test/

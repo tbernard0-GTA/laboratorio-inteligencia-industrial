@@ -1,0 +1,6 @@
+No signing policy available, user certificate cannot get verified
+No encrypting policy available, password may get transferred in plaintext
+Requested session timeout to be 3600000ms, got 600000ms instead
+Requested session timeout to be 3600000ms, got 600000ms instead
+PASS: TEP real, 3 tags, unidades, Good, timestamps e valores avancando
+{'received_at': '2026-10-28T19:20:12.183669+00:00', 'values': {'Pressao': {'value': 2705.2767339268385, 'unit': 'kPa(g)', 'timestamp': '2026-10-28T19:20:11.436150+00:00', 'quality': 'Good'}, 'Nivel': {'value': 75.16243467388381, 'unit': '%', 'timestamp': '2026-10-28T19:20:11.436150+00:00', 'quality': 'Good'}, 'Temperatura': {'value': 120.39188850522707, 'unit': 'C', 'timestamp': '2026-10-28T19:20:11.436150+00:00', 'quality': 'Good'}}}
