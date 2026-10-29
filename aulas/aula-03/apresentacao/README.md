@@ -1,3 +1,5 @@
+> **Material de planejamento anterior à divisão do vídeo.** Estes slides de 28/10 incluem Streamlit e 8501, que ficaram para o complemento. Não são uma reprodução exata da aula gravada nem a apresentação posteriormente revisada fora deste repositório. Para acompanhar o vídeo principal, use o [README](../README.md) e o [roteiro atualizado](../roteiro/roteiro_gravacao.md).
+
 # Apresentação da Aula 3
 
 - `Aula_03_Docker_Compose_Streamlit.pptx`: 20 slides editáveis, 16:9, com notas e duração total planejada de 60 minutos.

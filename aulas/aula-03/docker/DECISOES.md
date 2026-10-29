@@ -1,3 +1,5 @@
+> **Divisão do conteúdo (29/10/2026):** a Aula 3 cobre Docker/Compose e TEP+OPC. Streamlit e a porta 8501 são material de preparação do vídeo complementar, não etapas do vídeo principal. Para ativá-los, use `docker compose --env-file .env -f docker/compose.yaml --profile complemento ...`. Confira o [README da aula](../README.md).
+
 # Decisões técnicas e limites
 
 ## Evolução, não reescrita

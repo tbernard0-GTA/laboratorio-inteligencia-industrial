@@ -1,3 +1,5 @@
+> **Escopo editorial atualizado em 29/10/2026:** o vídeo principal cobre Docker/Compose e TEP+OPC. Os testes de Streamlit abaixo pertencem ao material preparado para o complemento. As evidências de 28/10 são preservadas como histórico da preparação, não como execução observada no Raspberry. A pasta atual é `aulas/aula-03`; caminhos antigos em logs históricos identificam a execução original.
+
 # Validação — 28/10/2026
 
 ## Resultado e alcance
@@ -75,3 +77,7 @@ Na preparação real, copiar `.env.example` para `.env`, conferir IPs, depois bu
 ## Evidências retidas
 
 Arquivos em [evidencias/](evidencias/): saídaPytest, smokeTEPreal, pipcheck, versãoCompose, healthHTTP e lista das dependências instaladas. `dependencias-cloud.txt` é registro do ambiente validado, **não um lock portátil ARM**. Logs de warnings de política sem criptografia são esperados nesta demonstração; não significam configuração segura para produção.
+
+## Revisão de escopo em 29/10/2026
+
+Pasta padronizada para `aulas/aula-03`, roteiro principal restrito a Docker/Compose e TEP+OPC. Streamlit preservado no profile opcional `complemento`. A suíte passou com **12 testes**. A CLI oficial Compose validou as duas configurações: o modo padrão seleciona apenas `tep-opc` e o profile seleciona também `streamlit`. Links relativos e `git diff --check` passaram; aulas 1 e 2 não foram alteradas. Veja [evidência da revisão](evidencias/revisao-20261029.txt). Build e execução Docker/ARM64 não foram realizados nesta revisão.

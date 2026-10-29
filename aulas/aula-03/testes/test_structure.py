@@ -18,3 +18,9 @@ def test_original_lessons_unchanged():
     source = (ROOT.parent / 'aula-01/servidor_opc.py').read_text()
     assert '192.168.1.19' in source
     assert 'socket_address' not in source
+
+
+def test_streamlit_is_explicit_complement():
+    data = yaml.safe_load((ROOT / "docker/compose.yaml").read_text())
+    assert "profiles" not in data["services"]["tep-opc"]
+    assert data["services"]["streamlit"]["profiles"] == ["complemento"]

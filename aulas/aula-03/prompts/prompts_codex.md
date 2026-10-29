@@ -1,10 +1,12 @@
+> **Divisão do conteúdo (29/10/2026):** a Aula 3 cobre Docker/Compose e TEP+OPC. Streamlit e a porta 8501 são material de preparação do vídeo complementar, não etapas do vídeo principal. Para ativá-los, use `docker compose --env-file .env -f docker/compose.yaml --profile complemento ...`. Confira o [README da aula](../README.md).
+
 # Codex em tarefas pequenas — Aula 3
 
 Cole um prompt por vez. Leia a resposta, revise o diff e execute o checkpoint antes de continuar. Os comandos Linux pertencem ao **Pi 4 por SSH**, não ao PowerShell local. O Codex deve trabalhar no checkout autorizado; nesta preparação, somente a nuvem foi usada. Não dê acesso aos Raspberry nem execute mudanças de rede implicitamente.
 
 ## Contexto fixo para abrir a sessão
 
-> Estamos no repositório laboratorio-inteligencia-industrial. A aula 1 tem um processo Python integrado: TEPSimulator + servidor asyncua. A aula 2 separa redes com Pi 3 como roteador/firewall e Pi 4 como aplicação. Nesta aula 3 vamos usar Docker Compose no Pi 4 e Streamlit como cliente OPC. Preserve aulas anteriores. Trabalhe em aulas/aula-03-docker-compose-streamlit. Não altere firewall, rotas ou configurações do host automaticamente; não publique, faça push ou merge sem autorização específica. Não introduza banco, React ou Kubernetes. Antes de editar, explique a mudança pequena, os arquivos e o teste. Ao terminar, mostre diff, resultado real e pendências. Não diga que testou hardware quando só testou na nuvem.
+> Estamos no repositório laboratorio-inteligencia-industrial. A aula 1 tem um processo Python integrado: TEPSimulator + servidor asyncua. A aula 2 separa redes com Pi 3 como roteador/firewall e Pi 4 como aplicação. Nesta aula 3 vamos usar Docker Compose no Pi 4 para TEP+OPC. Streamlit como cliente OPC pertence ao complemento e deve ficar em profile opcional. Preserve aulas anteriores. Trabalhe em aulas/aula-03. Não altere firewall, rotas ou configurações do host automaticamente; não publique, faça push ou merge sem autorização específica. Não introduza banco, React ou Kubernetes. Antes de editar, explique a mudança pequena, os arquivos e o teste. Ao terminar, mostre diff, resultado real e pendências. Não diga que testou hardware quando só testou na nuvem.
 
 ## 1 — Inventariar, sem alterar
 
@@ -14,7 +16,7 @@ Cole um prompt por vez. Leia a resposta, revise o diff e execute o checkpoint an
 
 ## 2 — Planejar a embalagem, sem código ainda
 
-> Com o inventário confirmado, proponha Dockerfile e Compose com dois serviços: tep-opc e streamlit. TEP+OPC permanece integrado. Explique bind dentro do container, endereço anunciado externo e DNS entre serviços. Planeje PI4_BIND_IP=10.77.0.10 para publicação4840/8501 e OPC_ENDPOINT=opc.tcp://tep-opc:4840/tep/ para o cliente. Liste variáveis, restart policy, healthchecks, limites do healthcheck e arquivos a criar. Nada de host network, privileged ou montagem do socket Docker. Diga quais escolhas requerem teste real no Pi4.
+> Com o inventário confirmado, proponha Dockerfile e Compose com tep-opc como serviço padrão. Reserve streamlit para o profile opcional complemento, sem iniciá-lo na aula principal. TEP+OPC permanece integrado. Explique bind dentro do container, endereço anunciado externo e DNS entre serviços. Planeje PI4_BIND_IP=10.77.0.10 para publicação4840/8501 e OPC_ENDPOINT=opc.tcp://tep-opc:4840/tep/ para o cliente. Liste variáveis, restart policy, healthchecks, limites do healthcheck e arquivos a criar. Nada de host network, privileged ou montagem do socket Docker. Diga quais escolhas requerem teste real no Pi4.
 
 **Checkpoint:** hostname de serviço funciona apenas na rede Compose; navegador usa IP do Pi4. Publicar porta não libera o gateway. Aprove o plano antes de editar.
 

@@ -1,3 +1,7 @@
+# Planejamento original — Aula 3 + complemento
+
+> Histórico de preparação de 28/10/2026. Não corresponde ao escopo final do vídeo da Aula 3. A parte Streamlit/8501 foi adiada. Use [roteiro atual](roteiro_gravacao.md). Os comandos abaixo são planejamento, não evidência de execução.
+
 # Roteiro de gravação — Aula 3 (60 minutos)
 
 ## Objetivo e ritmo
@@ -13,7 +17,7 @@ Thiago conduz e interpreta; Sol entra somente quando chamada, entrega um comando
 - **C — Pi4 por salto:** aplicação e Docker. `ssh -J admin@192.168.1.17 devadmin@10.77.0.10`.
 - **D — Windows:** navegador e UAExpert.
 
-Confirmar IPs antes. Clone/checkout e dependências já preparados, entre no diretório `aulas/aula-03-docker-compose-streamlit` do checkout real. Não confundir com a pasta antiga do servidor manual.
+Confirmar IPs antes. Clone/checkout e dependências já preparados, entre no diretório `aulas/aula-03` do checkout real. Não confundir com a pasta antiga do servidor manual.
 
 No Bash do **Pi4**, nesta pasta, defina atalho opcional:
 

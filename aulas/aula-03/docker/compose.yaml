@@ -26,6 +26,8 @@ services:
       driver: json-file
       options: {max-size: "5m", max-file: "2"}
   streamlit:
+    # Vídeo complementar: não sobe no comando padrão da Aula 03.
+    profiles: [complemento]
     build:
       context: ..
       dockerfile: docker/Dockerfile

@@ -1,3 +1,5 @@
+> **Divisão do conteúdo (29/10/2026):** a Aula 3 cobre Docker/Compose e TEP+OPC. Streamlit e a porta 8501 são material de preparação do vídeo complementar, não etapas do vídeo principal. Para ativá-los, use `docker compose --env-file .env -f docker/compose.yaml --profile complemento ...`. Confira o [README da aula](../README.md).
+
 # TCP 8501 — liberar, observar e reverter sem trocar o firewall
 
 **Executar somente no laboratório, presencialmente, depois de revisar os valores.** Este documento foi preparado na nuvem; não comprova o estado atual dos Raspberry Pi. Mantenha uma sessão SSH no Pi 3, uma sessão de salto no Pi 4 e acesso físico. Não altere regras `input`/`output` durante esta demonstração. Não use `flush ruleset`, não desative o firewall, não limpe conntrack globalmente e não carregue um arquivo genérico por cima da configuração existente.
@@ -6,7 +8,7 @@
 
 | Terminal | Uso | Endereço observado na aula 2 — confirmar |
 |---|---|---|
-| Windows / PowerShell | navegador e testes do cliente | `192.168.1.16` |
+| Windows / PowerShell | navegador e testes do cliente | `192.168.1.14` |
 | Pi 3 / `admin` | roteamento e firewall | Wi-Fi `192.168.1.17`; Ethernet `10.77.0.1` |
 | Pi 4 / `devadmin` | Docker, TEP/OPC e Streamlit | Ethernet `10.77.0.10` |
 
@@ -46,7 +48,7 @@ Esperado: `net.ipv4.ip_forward = 1`, Ethernet `10.77.0.1/24`, Wi-Fi na rede do n
 ```bash
 printf '%s\n' "$SSH_CONNECTION"
 ip -4 -br addr
-ip -4 route get 192.168.1.16
+ip -4 route get 192.168.1.14
 nmcli radio wifi
 ```
 
@@ -108,7 +110,7 @@ Os handles mudam. Leia o handle da regra **`Demais encaminhamentos bloqueados`**
 **Pi 3, mesmo terminal:**
 
 ```bash
-NOTEBOOK_IP=192.168.1.16
+NOTEBOOK_IP=192.168.1.14
 PI4_IP=10.77.0.10
 sudo nft -a list chain inet iilab_filter forward
 read -r -p 'Handle atual do drop final: ' DROP_HANDLE
@@ -151,9 +153,9 @@ Abra **`http://10.77.0.10:8501`**. Esperado: página carregada, conexão OPC ide
 Pi 3, outra sessão:
 
 ```bash
-sudo tcpdump -ni wlan0 -c 30 'host 192.168.1.16 and host 10.77.0.10 and tcp port 8501'
+sudo tcpdump -ni wlan0 -c 30 'host 192.168.1.14 and host 10.77.0.10 and tcp port 8501'
 # Em uma segunda captura, compare o lado Ethernet:
-sudo tcpdump -ni eth0 -c 30 'host 192.168.1.16 and host 10.77.0.10 and tcp port 8501'
+sudo tcpdump -ni eth0 -c 30 'host 192.168.1.14 and host 10.77.0.10 and tcp port 8501'
 sudo nft -a list chain inet iilab_filter forward
 ```
 
@@ -187,7 +189,7 @@ Ao terminar o ciclo bloquear→permitir→remover, decida se o laboratório deve
 3. Edite **somente a chain existente** na fonte efetiva, adicionando antes do descarte final a linha abaixo, com IPs conferidos; sem `handle` salvo:
 
    ```nft
-   iifname "wlan0" oifname "eth0" ip saddr 192.168.1.16 ip daddr 10.77.0.10 tcp dport 8501 counter accept comment "AULA3_STREAMLIT_8501"
+   iifname "wlan0" oifname "eth0" ip saddr 192.168.1.14 ip daddr 10.77.0.10 tcp dport 8501 counter accept comment "AULA3_STREAMLIT_8501"
    ```
 
 4. Revise o diff: apenas a exceção autorizada. Valide o arquivo de entrada efetivo com `sudo nft -c -f CAMINHO_REAL`. `CAMINHO_REAL` é um campo a substituir após inspeção, não um comando pronto. Não acrescente um flush para fazer a validação passar.
