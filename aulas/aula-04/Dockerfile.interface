@@ -1,0 +1,8 @@
+FROM iilab-tep-opc:local
+
+USER root
+COPY requirements.interface.txt /tmp/requirements.interface.txt
+RUN python -m pip install --no-cache-dir -r /tmp/requirements.interface.txt && python -m pip check
+COPY interface.py leitor_sqlite.py /app/
+USER 10001
+CMD ["streamlit", "run", "/app/interface.py", "--server.address=0.0.0.0", "--server.port=8501", "--server.headless=true"]
