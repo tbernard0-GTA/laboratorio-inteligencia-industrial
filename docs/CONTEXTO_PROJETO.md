@@ -1,5 +1,9 @@
 # Contexto do projeto
 
+## 2026-10-30 — Historiador SQLite local da Aula 5
+
+Foi implementado um historiador independente para ciclos das 53 tags, com banco dedicado, WAL e gravação transacional. Testes locais em imagem ARM64 sob emulação verificaram a cadeia TEP → OPC UA → coletor → SQLite e reabertura do banco. O uso no Pi 4, reconexão em rede real, crescimento do banco, backup e operação contínua permanecem a validar; não há retenção automática. Veja [aulas/aula-05](../aulas/aula-05/).
+
 ## 2026-10-30 — Coletor OPC UA local das 53 tags
 
 Foi preparado e testado localmente um coletor independente que descobre as tags canônicas, lê `DataValue` em lote e preserva valores, qualidade e timestamps em memória. Não há persistência, fila ou implantação neste incremento; reconexão foi exercitada com falha simulada. O comportamento no Pi 4 e na rede do laboratório permanece a validar. Detalhes em [aulas/aula-05](../aulas/aula-05/).

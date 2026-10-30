@@ -1,6 +1,6 @@
 # Aula 5 — catálogo, servidor e coleta OPC UA TEP
 
-O catálogo organiza 41 medições `XMEAS(1)` a `XMEAS(41)` e 12 variáveis manipuladas `XMV(1)` a `XMV(12)`. O servidor desta pasta publica essas 53 variáveis e três variáveis legadas a partir de um único simulador. O coletor independente lê as 53 tags canônicas sem armazená-las; o servidor da Aula 4 e sua implementação continuam independentes.
+O catálogo organiza 41 medições `XMEAS(1)` a `XMEAS(41)` e 12 variáveis manipuladas `XMV(1)` a `XMV(12)`. O servidor desta pasta publica essas 53 variáveis e três variáveis legadas a partir de um único simulador. O coletor independente lê as 53 tags canônicas; um historiador separado pode gravá-las em SQLite. A implementação da Aula 4 continua independente.
 
 `CATALOGO` é uma tupla de registros imutáveis com identificador estável, categoria (`medicao` ou `manipulada`), índice Python base zero, descrição original da biblioteca e unidade. Em cada vetor, o índice é o número da variável menos um: `XMEAS(7)` usa índice 6; `XMV(12)` usa índice 11. A ordem das medições e manipuladas é independente.
 
@@ -57,13 +57,31 @@ python coletor_opc.py opc.tcp://127.0.0.1:14840/tep/
 
 O coletor resolve o namespace pela URI e navega somente `TEP/XMEAS` e `TEP/XMV`. Ele exige exatamente os 53 identificadores do catálogo, sem duplicatas ou nós extras; as três variáveis em `Reator` não são coletadas. A versão asyncua 2.1.0 lê os atributos em um lote com `Client.read_attributes`, preservando o `DataValue` recebido. Cada `Leitura` expõe identificador, valor, `SourceTimestamp`, código numérico e qualidade `Good`, `Uncertain`, `Bad` ou `Desconhecida`, horário UTC da coleta e o objeto `DataValue` original. Valores, timestamps ou status ausentes permanecem ausentes. O horário de coleta é registrado ao receber o lote; a duração usa relógio monotônico e inclui a leitura e a conversão, sem incluir descoberta ou conexão.
 
-`ciclos(url)` fornece ciclos ao consumidor, com período alvo de um segundo. Após falha, encerra a sessão e tenta reconectar e redescobrir os nós a cada cinco segundos; uma divergência persistente do catálogo também provoca tentativas espaçadas. O programa de linha de comando mostra cada lote em JSON. Use Ctrl+C para encerrar. Nenhuma fila ou persistência é implementada: amostras perdidas durante desconexão ou processamento lento não são recuperadas. Uma etapa SQLite futura deverá definir esquema, validade, deduplicação, tratamento de timestamps ausentes, falhas e recuperação, sem presumir que cada publicação é nova análise física.
+`ciclos(url)` fornece ciclos ao consumidor, com período alvo de um segundo. Após falha, encerra a sessão e tenta reconectar e redescobrir os nós a cada cinco segundos; uma divergência persistente do catálogo também provoca tentativas espaçadas. O programa de linha de comando mostra cada lote em JSON. Use Ctrl+C para encerrar. O coletor, isoladamente, não possui fila nem persistência; o historiador descrito abaixo é um consumidor separado.
 
 Uma leitura em lote reduz chamadas, mas não garante que o servidor tenha atualizado todas as variáveis atomicamente. `SourceTimestamp` continua sendo o horário de publicação do servidor da Aula 5, inclusive para XMEAS(23–41), e não indica a realização ou idade de uma nova análise do processo. O coletor mantém o `StatusCode` recebido; não transforma qualidade ruim em valor válido.
 
+## Historiador SQLite
+
+Com o servidor local ativo, no ambiente Python da Aula 5, escolha explicitamente um arquivo **dedicado** e execute:
+
+```powershell
+python historico_sqlite.py opc.tcp://127.0.0.1:14840/tep/ --banco .\historico_aula05.sqlite3 --intervalo 5
+```
+
+O intervalo alvo é configurável e, se omitido, é de cinco segundos. O arquivo é independente do banco da Aula 4. O historiador rejeita bancos com tabelas que não tenham a identificação e a versão próprias da Aula 5; não migra nem modifica intencionalmente outros esquemas. A pasta escolhida deve existir. Use Ctrl+C para encerrar.
+
+O esquema possui `tags` (identificador estável, categoria, índice, descrição e unidade), `ciclos` (UUID, horário e hash do conteúdo) e `leituras` (ciclo, tag, valor, timestamps, StatusCode, qualidade e validade). Chaves estrangeiras ligam as leituras ao catálogo e ao ciclo; a chave `(ciclo_id, tag_id)` é única, com índices por tag e horário de coleta ou origem. Cada ciclo completo de 53 tags é gravado em uma transação; falha faz rollback. São usados WAL, `busy_timeout` de 5 segundos e foreign keys. Na reabertura, o esquema e catálogo são verificados sem apagar o histórico; divergências exigem migração futura, não são sobrescritas.
+
+Uma nova aquisição recebe um UUID diferente mesmo se valor ou `SourceTimestamp` não mudar. Reapresentar o mesmo ID com o mesmo conteúdo é idempotente; com outro conteúdo, é erro. Essa garantia depende de reutilizar o mesmo UUID: o processo não possui fila durável para recuperar uma aquisição não gravada após falha, nem assegura entrega exatamente uma vez entre reinicializações. Erros de banco interrompem o historiador para não ocultar perda; não há retenção automática. Monitore armazenamento e planeje backup consistente com WAL antes de uso operacional.
+
+Valores não numéricos, booleanos e não finitos são gravados como `NULL` com `valor_invalido`. Um valor numérico finito de qualidade `Bad` ou `Uncertain` é preservado com `qualidade_nao_good`; a qualidade e o StatusCode originais continuam disponíveis. Status ausente é `Desconhecida`, sem inventar um código. Um valor Good sem timestamp de origem recebe `source_timestamp_ausente`. `valido` indica número finito, qualidade Good e timestamp de origem presente; não prova que o processo é saudável ou que uma nova análise foi realizada. Timestamps presentes devem informar fuso horário e são registrados em UTC.
+
+Cada ciclo concluído mostra um JSON com UUID, contagem e tempos de leitura, gravação e ciclo ativo. O tempo de gravação mede a transação; o total soma a leitura ao processamento e gravação, sem incluir espera pelo próximo ciclo, conexão ou descoberta. As escritas das tags no servidor podem ocorrer entre leituras, mesmo em uma requisição em lote.
+
 ## Testes
 
-Na pasta `aulas/aula-05`, execute `python -m unittest -v test_catalogo_tags test_servidor_opc test_coletor_opc`. Os testes de estrutura usam simulador sintético; os de integração usam o simulador TEP e cliente OPC UA local e são ignorados se faltarem dependências. Use o ambiente com a revisão fixada em `aulas/aula-04/requirements-servidor.txt` para executá-los integralmente. O teste do coletor apresenta a duração de dez leituras locais de 53 tags; essa medida não inclui conexão, descoberta ou gravação e não representa o desempenho em rede ou no Pi.
+Na pasta `aulas/aula-05`, execute `python -m unittest -v test_catalogo_tags test_servidor_opc test_coletor_opc test_historico_sqlite`. Os testes de estrutura usam simulador sintético; os de integração usam o simulador TEP e cliente OPC UA local e são ignorados se faltarem dependências. Use o ambiente com a revisão fixada em `aulas/aula-04/requirements-servidor.txt` para executá-los integralmente. O teste do historiador usa arquivo temporário, coleta cinco ciclos, reabre o banco e informa os tempos e o tamanho final do arquivo. Essas medidas não representam o desempenho em rede ou no Pi.
 
 O teste `test_integracao_coletor_aula04` inicia os programas reais das Aulas 4 e 5 em processos locais e usa um banco temporário sob `/data`, como exigido pelo coletor. Execute-o em um container POSIX com `/data` descartável e a revisão fixada do TEP; ele não usa o banco do laboratório. Por exemplo, no PowerShell, a partir da raiz, com a imagem local `iilab-aula04-verificacao:local` já disponível:
 

@@ -1,5 +1,13 @@
 # Diário de bordo
 
+## 2026-10-30 — Historiador SQLite das 53 tags, incremento 3B
+
+- **Alterações:** criados historiador e testes, com catálogo, ciclos UUID e leituras em banco independente. Gravação atômica, idempotência por ciclo e tag, WAL, chaves estrangeiras, índices e metadados de qualidade; README e contexto atualizados.
+- **Testes:** sete testes do historiador passaram com TEP 2.5.0 na revisão fixada e asyncua 2.1.0 em imagem ARM64 local sob emulação; os seis testes locais de banco também passaram no Windows. Verificados rollback após falha, reabertura, repetição de ciclo, leituras iguais em ciclos diferentes, valores inválidos, qualidades, timestamp ausente, banco alheio e leitura concorrente. Os 13 testes anteriores da Aula 4 e 12 da Aula 5 passaram.
+- **Experimento integrado:** TEP inicializado e avançado uma vez, servidor OPC UA local, coletor reiniciado e banco temporário reaberto. Cinco ciclos com intervalo alvo de 0,1 s no teste armazenaram 265 registros, preservando leituras iguais; arquivo SQLite após fechamento: 131.072 bytes. Médias: leitura 39,27 ms, transação 12,84 ms e ciclo ativo 59,71 ms. Tempos ativos individuais: 67,48; 60,97; 56,19; 54,91; 59,03 ms. Medições em loopback sob emulação, sem espera, conexão ou descoberta; não representam o Pi nem operação de longa duração.
+- **Problemas e decisões:** um timestamp de publicação não prova nova análise das XMEAS(23–41). Ausências e qualidades ruins são preservadas; não há fila durável, recuperação de amostra perdida ou retenção automática. Falha no banco interrompe a operação. Nenhum Raspberry ou banco de produção foi acessado, não houve deploy nem alterações nas Aulas 1 a 4, no servidor ou no Compose.
+- **Próxima ação:** definir política de backup, retenção e recuperação e validar capacidade, rede e impacto de implantação apenas em etapa autorizada.
+
 ## 2026-10-30 — Coletor OPC UA das 53 tags, incremento 3A
 
 - **Alterações:** criado coletor independente que descobre os grupos por URI de namespace, valida os 53 identificadores, lê em lote e conserva `DataValue`, status, qualidade, valor e timestamps em memória. Documentados uso, reconexão e limites; nenhuma persistência foi implementada.
