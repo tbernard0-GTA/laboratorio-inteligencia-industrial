@@ -1,0 +1,82 @@
+services:
+  interface:
+    image: iilab-interface:local
+    build:
+      context: .
+      dockerfile: Dockerfile.interface
+    environment:
+      SQLITE_PATH: ${SQLITE_PATH:-/data/leituras.sqlite3}
+    volumes:
+      - historico:/data:ro
+    ports:
+      - "${PI4_ETH_IP:?Configure o IP Ethernet do Pi 4 no arquivo .env}:8501:8501/tcp"
+    networks:
+      - iilab
+    init: true
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8501/_stcore/health', timeout=3).read()"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  coletor:
+    image: iilab-coletor:local
+    build:
+      context: .
+      dockerfile: Dockerfile.coletor
+    environment:
+      OPC_UA_URL: opc.tcp://tep-opc:4840/tep/
+      SQLITE_PATH: ${SQLITE_PATH:-/data/leituras.sqlite3}
+    volumes:
+      - historico:/data
+    networks:
+      - iilab
+    init: true
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  tep-opc:
+    image: iilab-tep-opc:local
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      OPC_UA_BIND_HOST: 0.0.0.0
+      OPC_UA_ADVERTISE_HOST: ${OPC_UA_ADVERTISE_HOST:?Configure o host anunciado no arquivo .env}
+      OPC_UA_PORT: "4840"
+    ports:
+      - "${PI4_ETH_IP:?Configure o IP Ethernet do Pi 4 no arquivo .env}:4840:4840/tcp"
+    networks:
+      - iilab
+    init: true
+    stop_signal: SIGINT
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import socket; socket.create_connection(('127.0.0.1', 4840), timeout=3).close()"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 120s
+
+networks:
+  iilab:
+    driver: bridge
+
+volumes:
+  historico:
