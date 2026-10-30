@@ -1,5 +1,12 @@
 # Diário de bordo
 
+## 2026-10-30 — Catálogo de variáveis da Aula 5
+
+- **Alterações:** criado catálogo com 41 XMEAS e 12 XMV, leitura validada por nomes e índices, testes e README; adicionadas regras Git para bancos SQLite, WAL e SHM. Atualizado o contexto. As Aulas 1 a 4 não foram modificadas.
+- **Testes:** testes locais de estrutura e mapeamento executados no Windows; teste de integração ignorado ali por ausência de `tep`. Na imagem local ARM64 `iilab-aula04-verificacao:local`, sob emulação, os cinco testes passaram com TEP 2.5.0 na revisão `9a6c8e5fcef4a2850778704e7793c87b0a187005`; os 13 testes existentes da Aula 4 também passaram. Foram verificadas as regras de exclusão para `.sqlite`, `.sqlite3`, `.db` e respectivos WAL/SHM.
+- **Problemas e decisões:** `%` das XMV representa a escala do modelo, não uma unidade física de vazão ou rotação. Leituras das análises amostradas podem permanecer inalteradas entre ciclos. Não houve acesso aos Raspberry, deploy ou alterações ao servidor OPC UA.
+- **Próxima ação:** definir a publicação OPC UA das tags somente em etapa futura autorizada e validar a integração correspondente.
+
 ## 2026-10-29 — Publicação do material da Aula 4
 
 - **Alterações:** criada uma branch a partir de `8c142fd`, que contém a Aula 3 publicada; adicionados à pasta `aulas/aula-04` os arquivos locais do servidor, coletor, interface, Compose e testes, adaptando apenas os caminhos de build para a nova pasta. Criados README, roteiro e checklist; índice do repositório e contexto atualizados. O workspace original com alterações não rastreadas foi preservado.

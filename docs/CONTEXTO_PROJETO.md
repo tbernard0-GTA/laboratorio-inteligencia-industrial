@@ -1,5 +1,9 @@
 # Contexto do projeto
 
+## 2026-10-30 — Catálogo local da Aula 5
+
+Foi preparado um catálogo local de 41 medições e 12 manipuladas da revisão TEP fixada, com leitura e testes de correspondência. A integração com o simulador foi testada localmente em imagem ARM64 sob emulação. A publicação dessas variáveis por OPC UA permanece futura; não houve alteração ou inspeção dos equipamentos nesta etapa. Detalhes em [aulas/aula-05](../aulas/aula-05/).
+
 > Atualização de 29/10/2026: este documento preserva o histórico das etapas anteriores. A Aula 4 e seu estado comprovado ou pendente estão em [aulas/aula-04](../aulas/aula-04/) e nas entradas recentes do diário. Dados e planos históricos abaixo não comprovam o estado atual dos equipamentos.
 
 
