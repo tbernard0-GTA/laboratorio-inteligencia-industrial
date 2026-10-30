@@ -79,9 +79,13 @@ Valores não numéricos, booleanos e não finitos são gravados como `NULL` com 
 
 Cada ciclo concluído mostra um JSON com UUID, contagem e tempos de leitura, gravação e ciclo ativo. O tempo de gravação mede a transação; o total soma a leitura ao processamento e gravação, sem incluir espera pelo próximo ciclo, conexão ou descoberta. As escritas das tags no servidor podem ocorrer entre leituras, mesmo em uma requisição em lote.
 
+## Consultas SQL
+
+As consultas predefinidas e o executor somente leitura estão em [sql/consultas.sql](sql/consultas.sql) e [consultar_historico.py](consultar_historico.py). O [roteiro de consultas](sql/README.md) apresenta exemplos locais, em contêiner e por SSH, parâmetros, planos de execução e uma sequência didática. As comparações relacionam as tags pelo ciclo de aquisição; médias por minuto usam apenas leituras válidas e o horário UTC de coleta. Os testes e exemplos locais utilizam bancos temporários e dados simulados.
+
 ## Testes
 
-Na pasta `aulas/aula-05`, execute `python -m unittest -v test_catalogo_tags test_servidor_opc test_coletor_opc test_historico_sqlite`. Os testes de estrutura usam simulador sintético; os de integração usam o simulador TEP e cliente OPC UA local e são ignorados se faltarem dependências. Use o ambiente com a revisão fixada em `aulas/aula-04/requirements-servidor.txt` para executá-los integralmente. O teste do historiador usa arquivo temporário, coleta cinco ciclos, reabre o banco e informa os tempos e o tamanho final do arquivo. Essas medidas não representam o desempenho em rede ou no Pi.
+Na pasta `aulas/aula-05`, execute `python -m unittest -v test_catalogo_tags test_servidor_opc test_coletor_opc test_historico_sqlite test_consultas_sql`. Os testes de estrutura usam simulador sintético; os de integração usam o simulador TEP e cliente OPC UA local e são ignorados se faltarem dependências. Use o ambiente com a revisão fixada em `aulas/aula-04/requirements-servidor.txt` para executá-los integralmente. O teste do historiador usa arquivo temporário, coleta cinco ciclos, reabre o banco e informa os tempos e o tamanho final do arquivo. O teste das consultas também avança o simulador durante a coleta. Essas medidas não representam o desempenho em rede ou no Pi.
 
 O teste `test_integracao_coletor_aula04` inicia os programas reais das Aulas 4 e 5 em processos locais e usa um banco temporário sob `/data`, como exigido pelo coletor. Execute-o em um container POSIX com `/data` descartável e a revisão fixada do TEP; ele não usa o banco do laboratório. Por exemplo, no PowerShell, a partir da raiz, com a imagem local `iilab-aula04-verificacao:local` já disponível:
 

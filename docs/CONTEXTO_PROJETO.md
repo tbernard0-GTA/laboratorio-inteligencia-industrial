@@ -1,5 +1,9 @@
 # Contexto do projeto
 
+## 2026-10-30 — Consultas locais do historiador da Aula 5
+
+Foram preparadas consultas SQL parametrizadas e um executor somente leitura, com exemplos didáticos de filtros, agregações e comparação por ciclo. Em testes locais com banco temporário, o TEP avançou durante a coleta e os planos de execução foram examinados. Os exemplos são simulados; não confirmam dados ou desempenho no Pi. Veja [aulas/aula-05/sql](../aulas/aula-05/sql/).
+
 ## 2026-10-30 — Historiador SQLite local da Aula 5
 
 Foi implementado um historiador independente para ciclos das 53 tags, com banco dedicado, WAL e gravação transacional. Testes locais em imagem ARM64 sob emulação verificaram a cadeia TEP → OPC UA → coletor → SQLite e reabertura do banco. O uso no Pi 4, reconexão em rede real, crescimento do banco, backup e operação contínua permanecem a validar; não há retenção automática. Veja [aulas/aula-05](../aulas/aula-05/).

@@ -1,5 +1,13 @@
 # Diário de bordo
 
+## 2026-10-30 — Consultas SQL do historiador da Aula 5
+
+- **Alterações:** criadas sete consultas parametrizadas, executor SQLite somente leitura, testes, roteiro de SQL e instruções para execução local, em contêiner e por SSH. Comparação de pressão, temperatura e XMV(10) usa `ciclo_id`; agregados excluem leituras inválidas.
+- **Testes:** seis testes locais de consulta passaram no Windows, incluindo execução pela linha de comando, banco vazio, limites, resultados inválidos e associação por ciclo. Testes em imagem ARM64 local sob emulação passaram para consultas e historiador; o teste integrado usou TEP 2.5.0 e asyncua 2.1.0. Em uma execução dinâmica, o simulador avançou 23 passos durante seis ciclos, que produziram 318 leituras; pressão e temperatura apresentaram seis valores distintos e a pressão seis timestamps de publicação distintos. Os valores são simulados, não medições de campo.
+- **Planos:** o SQLite local usou `leituras_tag_coleta` nas buscas por tag e intervalo; na comparação usou a chave `(ciclo_id, tag_id)` para temperatura e água de resfriamento. A agregação por minuto usou B-trees temporárias para agrupamento e ordenação. Esses planos não comprovam desempenho no Pi.
+- **Decisões e limitações:** filtros usam horário UTC de coleta; `SourceTimestamp` de publicação não comprova análise nova. Leituras do mesmo ciclo não são necessariamente simultâneas. O acesso por SSH e contêiner é apenas documentado; nenhum Raspberry, banco de produção, servidor, coletor, Compose ou aula anterior foi alterado.
+- **Próxima ação:** avaliar os planos e custos com volumes representativos e operação real somente em etapa autorizada; definir retenção e backup antes de uso contínuo.
+
 ## 2026-10-30 — Historiador SQLite das 53 tags, incremento 3B
 
 - **Alterações:** criados historiador e testes, com catálogo, ciclos UUID e leituras em banco independente. Gravação atômica, idempotência por ciclo e tag, WAL, chaves estrangeiras, índices e metadados de qualidade; README e contexto atualizados.
