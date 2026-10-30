@@ -1,5 +1,9 @@
 # Contexto do projeto
 
+## 2026-10-30 — Coletor OPC UA local das 53 tags
+
+Foi preparado e testado localmente um coletor independente que descobre as tags canônicas, lê `DataValue` em lote e preserva valores, qualidade e timestamps em memória. Não há persistência, fila ou implantação neste incremento; reconexão foi exercitada com falha simulada. O comportamento no Pi 4 e na rede do laboratório permanece a validar. Detalhes em [aulas/aula-05](../aulas/aula-05/).
+
 ## 2026-10-30 — Servidor OPC UA local da Aula 5
 
 Foi preparado um servidor independente que publica 41 XMEAS, 12 XMV e as três tags legadas, com leitura e navegação testadas localmente em imagem ARM64 sob emulação. Um teste posterior confirmou a coleta das três tags pelo coletor original da Aula 4, com banco descartável local; o uso no Pi 4 permanece sem validação. O timestamp indica publicação, não a idade da análise amostrada. Veja [aulas/aula-05](../aulas/aula-05/).

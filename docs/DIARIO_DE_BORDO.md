@@ -1,5 +1,12 @@
 # Diário de bordo
 
+## 2026-10-30 — Coletor OPC UA das 53 tags, incremento 3A
+
+- **Alterações:** criado coletor independente que descobre os grupos por URI de namespace, valida os 53 identificadores, lê em lote e conserva `DataValue`, status, qualidade, valor e timestamps em memória. Documentados uso, reconexão e limites; nenhuma persistência foi implementada.
+- **Testes e resultados:** três testes do novo coletor passaram com asyncua 2.1.0 e TEP 2.5.0 na revisão fixada, em imagem ARM64 local sob emulação. Passaram também os nove testes anteriores da Aula 5, incluindo integração com o coletor original da Aula 4. O servidor real e um namespace extra confirmaram leitura dos 53 valores, sem aliases. Foram exercitados nós ausentes e inesperados, status Good/Uncertain/Bad, timestamp ausente e reconexão com falha simulada. Em dez leituras locais de 53 tags, duração média 40,69 ms, mínima 36,60 ms e máxima 45,41 ms; medição inclui leitura e conversão, não conexão ou descoberta, com loopback e emulação.
+- **Problemas e decisões:** XMEAS(23–41) permanecem análises amostradas; timestamp de publicação não prova análise nova. Escritas do servidor não são atômicas. O teste de reconexão usa simulação, sem comprovar recuperação de rede real. Nenhum acesso aos Raspberry, deploy, mudança do servidor ou alteração das Aulas 1 a 4.
+- **Próxima ação:** em incremento futuro autorizado, definir persistência, validade, deduplicação e recuperação; validar desempenho e reconexão no ambiente real antes de operação.
+
 ## 2026-10-30 — Integração do coletor da Aula 4 com servidor da Aula 5
 
 - **Alterações:** criado teste local que executa o servidor real da Aula 5 e o coletor original da Aula 4 em processos separados. Atualizados README e contexto; preservados os arquivos das Aulas 1 a 4.

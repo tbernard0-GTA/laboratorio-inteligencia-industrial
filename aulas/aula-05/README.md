@@ -1,6 +1,6 @@
-# Aula 5 — catálogo e servidor OPC UA TEP
+# Aula 5 — catálogo, servidor e coleta OPC UA TEP
 
-O catálogo organiza 41 medições `XMEAS(1)` a `XMEAS(41)` e 12 variáveis manipuladas `XMV(1)` a `XMV(12)`. O servidor desta pasta publica essas 53 variáveis e três variáveis legadas a partir de um único simulador. Ele é independente do servidor da Aula 4; não grava dados nem inclui coletor ou interface.
+O catálogo organiza 41 medições `XMEAS(1)` a `XMEAS(41)` e 12 variáveis manipuladas `XMV(1)` a `XMV(12)`. O servidor desta pasta publica essas 53 variáveis e três variáveis legadas a partir de um único simulador. O coletor independente lê as 53 tags canônicas sem armazená-las; o servidor da Aula 4 e sua implementação continuam independentes.
 
 `CATALOGO` é uma tupla de registros imutáveis com identificador estável, categoria (`medicao` ou `manipulada`), índice Python base zero, descrição original da biblioteca e unidade. Em cada vetor, o índice é o número da variável menos um: `XMEAS(7)` usa índice 6; `XMV(12)` usa índice 11. A ordem das medições e manipuladas é independente.
 
@@ -47,9 +47,23 @@ Conecte um cliente local a `opc.tcp://127.0.0.1:14840/tep/` e use Ctrl+C para en
 
 O servidor usa `NoSecurity` e acesso anônimo, como a Aula 4: limite-o a uma rede de laboratório autorizada e não o exponha à internet. O exemplo acima usa somente loopback. Esta etapa não inclui Docker Compose ou implantação. Antes de qualquer uso no Pi 4, será necessário verificar compatibilidade ARM64, recursos, endpoint, portas, acesso e impacto sobre o servidor existente; estes aspectos não foram testados no equipamento.
 
+## Coletor das 53 tags
+
+Com o servidor local em execução e o mesmo ambiente Python ativo, abra outro PowerShell, ative o ambiente e execute a partir de `aulas/aula-05`:
+
+```powershell
+python coletor_opc.py opc.tcp://127.0.0.1:14840/tep/
+```
+
+O coletor resolve o namespace pela URI e navega somente `TEP/XMEAS` e `TEP/XMV`. Ele exige exatamente os 53 identificadores do catálogo, sem duplicatas ou nós extras; as três variáveis em `Reator` não são coletadas. A versão asyncua 2.1.0 lê os atributos em um lote com `Client.read_attributes`, preservando o `DataValue` recebido. Cada `Leitura` expõe identificador, valor, `SourceTimestamp`, código numérico e qualidade `Good`, `Uncertain`, `Bad` ou `Desconhecida`, horário UTC da coleta e o objeto `DataValue` original. Valores, timestamps ou status ausentes permanecem ausentes. O horário de coleta é registrado ao receber o lote; a duração usa relógio monotônico e inclui a leitura e a conversão, sem incluir descoberta ou conexão.
+
+`ciclos(url)` fornece ciclos ao consumidor, com período alvo de um segundo. Após falha, encerra a sessão e tenta reconectar e redescobrir os nós a cada cinco segundos; uma divergência persistente do catálogo também provoca tentativas espaçadas. O programa de linha de comando mostra cada lote em JSON. Use Ctrl+C para encerrar. Nenhuma fila ou persistência é implementada: amostras perdidas durante desconexão ou processamento lento não são recuperadas. Uma etapa SQLite futura deverá definir esquema, validade, deduplicação, tratamento de timestamps ausentes, falhas e recuperação, sem presumir que cada publicação é nova análise física.
+
+Uma leitura em lote reduz chamadas, mas não garante que o servidor tenha atualizado todas as variáveis atomicamente. `SourceTimestamp` continua sendo o horário de publicação do servidor da Aula 5, inclusive para XMEAS(23–41), e não indica a realização ou idade de uma nova análise do processo. O coletor mantém o `StatusCode` recebido; não transforma qualidade ruim em valor válido.
+
 ## Testes
 
-Na pasta `aulas/aula-05`, execute `python -m unittest -v test_catalogo_tags test_servidor_opc`. Os testes de estrutura usam um simulador sintético; os de integração usam o simulador TEP e um cliente OPC UA local e são ignorados se faltarem dependências. Use o ambiente com a revisão fixada em `aulas/aula-04/requirements-servidor.txt` para executá-los integralmente.
+Na pasta `aulas/aula-05`, execute `python -m unittest -v test_catalogo_tags test_servidor_opc test_coletor_opc`. Os testes de estrutura usam simulador sintético; os de integração usam o simulador TEP e cliente OPC UA local e são ignorados se faltarem dependências. Use o ambiente com a revisão fixada em `aulas/aula-04/requirements-servidor.txt` para executá-los integralmente. O teste do coletor apresenta a duração de dez leituras locais de 53 tags; essa medida não inclui conexão, descoberta ou gravação e não representa o desempenho em rede ou no Pi.
 
 O teste `test_integracao_coletor_aula04` inicia os programas reais das Aulas 4 e 5 em processos locais e usa um banco temporário sob `/data`, como exigido pelo coletor. Execute-o em um container POSIX com `/data` descartável e a revisão fixada do TEP; ele não usa o banco do laboratório. Por exemplo, no PowerShell, a partir da raiz, com a imagem local `iilab-aula04-verificacao:local` já disponível:
 
