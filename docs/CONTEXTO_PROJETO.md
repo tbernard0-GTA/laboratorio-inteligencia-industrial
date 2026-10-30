@@ -1,5 +1,9 @@
 # Contexto do projeto
 
+## 2026-10-30 — Servidor OPC UA local da Aula 5
+
+Foi preparado um servidor independente que publica 41 XMEAS, 12 XMV e as três tags legadas, com leitura e navegação testadas localmente em imagem ARM64 sob emulação. Um teste posterior confirmou a coleta das três tags pelo coletor original da Aula 4, com banco descartável local; o uso no Pi 4 permanece sem validação. O timestamp indica publicação, não a idade da análise amostrada. Veja [aulas/aula-05](../aulas/aula-05/).
+
 ## 2026-10-30 — Catálogo local da Aula 5
 
 Foi preparado um catálogo local de 41 medições e 12 manipuladas da revisão TEP fixada, com leitura e testes de correspondência. A integração com o simulador foi testada localmente em imagem ARM64 sob emulação. A publicação dessas variáveis por OPC UA permanece futura; não houve alteração ou inspeção dos equipamentos nesta etapa. Detalhes em [aulas/aula-05](../aulas/aula-05/).

@@ -1,5 +1,19 @@
 # Diário de bordo
 
+## 2026-10-30 — Integração do coletor da Aula 4 com servidor da Aula 5
+
+- **Alterações:** criado teste local que executa o servidor real da Aula 5 e o coletor original da Aula 4 em processos separados. Atualizados README e contexto; preservados os arquivos das Aulas 1 a 4.
+- **Testes e resultados:** teste de integração passou em imagem local ARM64 sob emulação, com TEP na revisão `9a6c8e5fcef4a2850778704e7793c87b0a187005` e asyncua 2.1.0. O coletor encontrou Pressao, Nivel e Temperatura e gravou pelo menos duas amostras por sinal em SQLite temporário em `/data` montado como tmpfs. Verificados valores finitos, unidades, StatusCode Good, timestamps, esquema, WAL e ausência de duplicatas; a reapresentação de uma amostra real à função original de gravação não criou outra linha. Os 13 testes existentes da Aula 4 e os oito da Aula 5 passaram no mesmo tipo de ambiente.
+- **Problemas e decisões:** não foi observada incompatibilidade no cenário local. A comunicação foi limitada a loopback; o banco temporário e os processos foram descartados ao final. O teste não comprova desempenho, operação contínua ou conectividade no Pi.
+- **Próxima ação:** realizar eventuais testes no ambiente real apenas em etapa autorizada e após inventário de serviços e riscos. Nenhum Raspberry foi acessado e não houve deploy.
+
+## 2026-10-30 — Publicação OPC UA das tags da Aula 5
+
+- **Alterações:** servidor separado para 41 XMEAS e 12 XMV do catálogo, metadados e três tags legadas; documentação e testes locais. Nenhum arquivo das Aulas 1 a 4 ou Compose foi alterado.
+- **Testes:** oito testes passaram em imagem ARM64 local sob emulação, com TEP 2.5.0 na revisão `9a6c8e5fcef4a2850778704e7793c87b0a187005` e asyncua 2.1.0. Cliente local conferiu 53 NodeIds únicos, hierarquia, metadados, valores, timestamps e permissões, com tentativa de escrita rejeitada. Comparadas as três tags legadas e seus NodeIds com a sequência da Aula 4. No Python Windows, cinco testes passaram e três foram ignorados por falta das dependências. `git diff --check` conferido.
+- **Problemas e decisões:** a comparação inicial de DataValue completo falhou por diferenças de `ServerTimestamp` entre escritas; o teste foi corrigido para verificar valor, StatusCode e SourceTimestamp. Os nós são atualizados sequencialmente; o timestamp não representa uma nova análise das XMEAS amostradas. Nenhum teste completo do coletor da Aula 4 contra o servidor novo foi realizado.
+- **Próxima ação:** em etapa autorizada, validar integração operacional e impacto em recursos e serviços no Pi 4 antes de qualquer implantação. Não houve acesso aos Raspberry, deploy ou alteração de rede.
+
 ## 2026-10-30 — Catálogo de variáveis da Aula 5
 
 - **Alterações:** criado catálogo com 41 XMEAS e 12 XMV, leitura validada por nomes e índices, testes e README; adicionadas regras Git para bancos SQLite, WAL e SHM. Atualizado o contexto. As Aulas 1 a 4 não foram modificadas.
