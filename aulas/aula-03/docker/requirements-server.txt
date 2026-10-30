@@ -1,0 +1,5 @@
+# Versoes diretas conferidas no Raspberry Pi usado na aula inaugural.
+# Docker compila wheels no estagio de build; nao altera o Python do host.
+numpy==2.2.6
+asyncua==2.1.0
+tep @ git+https://github.com/jkitchin/tennessee-eastman-profbraatz.git@9a6c8e5fcef4a2850778704e7793c87b0a187005

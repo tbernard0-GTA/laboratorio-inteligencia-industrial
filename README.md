@@ -8,6 +8,7 @@ Este repositório reúne as aulas do laboratório. É o início do projeto: a id
 
 - **Aula 01:** Do zero ao OPC UA com TEP — instruções nesta página e [códigos](aulas/aula-01/).
 - **Aula 02:** [Segmentação de redes e controle de acesso com Raspberry Pi e nftables](aulas/aula-02/).
+- **Aula 03:** [Docker e Docker Compose para TEP e OPC UA](aulas/aula-03/) — comandos, código e roteiro; Streamlit separado como complemento.
 
 ## Aula 01 — Do zero ao OPC UA com TEP
 
@@ -25,10 +26,15 @@ laboratorio-inteligencia-industrial/
     │   ├── requirements.txt
     │   ├── simular_tep.py     # Simulação e leituras no terminal
     │   └── servidor_opc.py    # Simulação integrada ao servidor OPC UA
-    └── aula-02/
-        ├── README.md          # Redes, roteamento e firewall
-        ├── aula02.nft         # Regras adaptáveis do laboratório
-        └── iilab-forward-video.nft # Reconstituição das regras exibidas
+    ├── aula-02/
+    │   ├── README.md          # Redes, roteamento e firewall
+    │   ├── aula02.nft         # Regras adaptáveis do laboratório
+    │   └── iilab-forward-video.nft # Reconstituição das regras exibidas
+    └── aula-03/
+        ├── README.md          # Docker/Compose para TEP + OPC UA
+        ├── servidor_opc.py
+        ├── docker/            # Dockerfile e Compose
+        └── COMPLEMENTO_STREAMLIT.md # Continuação separada do vídeo
 ```
 
 ## Preparar o Raspberry Pi
@@ -121,7 +127,7 @@ Na conferência de 27/10/2026, os scripts originais foram executados no Raspberr
 
 Os scripts tentam executar um ciclo por segundo de relógio. Na revisão e configuração utilizadas, cada passo do modelo avança **um segundo simulado**, conferido no Raspberry. O tempo do modelo e o horário UTC continuam sendo referências distintas: atrasos no cálculo ou no sistema operacional podem afastá-los, sem garantia de tempo real.
 
-Esta aula trabalha com dados simulados. Ainda não há coletor independente, armazenamento histórico, banco de contexto, dashboard ou diagnóstico implementado neste repositório.
+Esta aula trabalha com dados simulados. Na aula 1 não há coletor independente, armazenamento histórico, banco de contexto, dashboard ou diagnóstico. A [aula 3](aulas/aula-03/) organiza TEP e OPC UA em container com Docker Compose. A interface Streamlit fica para um vídeo complementar; armazenamento persistente e diagnóstico continuam fora de escopo.
 
 **Use o servidor somente em uma rede de laboratório restrita:** esta configuração permite acesso anônimo e não usa criptografia. Não exponha a porta `4840` à internet nem utilize esta configuração diretamente em produção.
 

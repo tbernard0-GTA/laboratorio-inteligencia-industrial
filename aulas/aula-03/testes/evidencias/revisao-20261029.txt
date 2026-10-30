@@ -1,0 +1,18 @@
+Revisão de escopo e pasta — 2026-10-29, executor cloud x86_64
+
+Python pytest (venv de testes da preparação):
+python -m pytest aulas/aula-03/testes -q
+12 passed in 19.03s
+
+Docker Compose standalone oficial v5.6.1 (sem daemon):
+config --services => tep-opc
+--profile complemento config --services => tep-opc, streamlit
+config --quiet => exit 0
+--profile complemento config --quiet => exit 0
+
+Links relativos Markdown: nenhum quebrado.
+git diff --check: exit 0.
+Diff de aulas/aula-01 e aulas/aula-02 contra origin/main: vazio.
+
+Não executados nesta revisão: build/runtime Docker, Raspberry ARM64,
+tráfego físico pelo firewall, teste de persistência após reboot.
