@@ -1,5 +1,47 @@
 # Diário de bordo
 
+## 2026-10-30 — Revisão do material após a gravação da Aula 5
+
+- **Evidências fornecidas por Thiago:** Aula 4 exibida e seus três contêineres parados com volume preservado. Pacote v2 transferido ao Pi 4 com três hashes OK; carga da imagem e subida dos serviços relatadas. O historiador avançou de 14 ciclos/742 leituras para 17/901; relatadas 53 tags cadastradas e observadas, consultas ao banco ativo, healthcheck do histórico aprovado e nenhum ciclo com quantidade diferente de 53 na auditoria. Isso não demonstra ausência de lacunas ou qualidade perfeita. Após parada, somente `Exited` do historiador foi relatado; estado dos demais contêineres não foi confirmado nesta revisão.
+- **Relógio e rede:** usuário informou Pi 3 com chrony e NTP restrito ao Pi 4, que apontava ao Pi 3; amostra fornecida indicou sincronização e offset estimado de -876 µs. A regra 8501 foi relatada em memória; persistência após reinício não foi verificada.
+- **Alterações:** material, preflight, guia, roteiro e checklist atualizados; empacotamento local e testes preparados para publicação. Aplicação e pacote gravado preservados: hashes de oito arquivos internos da imagem local correspondem aos do repositório; Compose e consulta do pacote exportado também coincidem.
+- **Verificações:** Compose expandido e validado no Docker Desktop; links relativos e 27 trechos reais do guia conferidos. A primeira suíte local teve 28 testes aprovados e erro de importação do módulo de compatibilidade por montagem incompleta das Aulas. O teste de compatibilidade com o coletor da Aula 4 passou em montagem corrigida; depois a suíte completa foi repetida e os 29 testes passaram em 165,918 s, na imagem ARM64 sob emulação e sem rede externa. Os bancos e simuladores dos testes eram locais e temporários.
+- **Problemas e decisões:** não houve acesso remoto, novo deploy ou alteração dos serviços nesta revisão. Reboot, persistência do firewall, estado atual dos contêineres e backup/restauração continuam pendentes; painel das 53 tags fica para a próxima aula.
+- **Próxima ação:** publicar na branch de desenvolvimento após as verificações locais; qualquer nova operação no Pi depende de inspeção e autorização específicas.
+
+## 2026-10-30 — Guia de estudo do código da Aula 5
+
+- **Alterações:** criado `aulas/aula-05/GUIA_ESTUDO_CODIGO_AULA_05.md` a partir dos arquivos locais e do empacotamento ainda não commitado, com roteiro didático, exemplos SQL e limites das evidências.
+- **Verificações:** revisão documental das referências e dos trechos de código; nenhum teste da aplicação foi executado nesta etapa.
+- **Problemas e decisões:** a execução no Pi, a persistência após reinicialização do dispositivo e o painel das 53 tags continuam pendentes; não houve deploy ou mudança em serviços.
+- **Próxima ação:** estudar o guia e confirmar os pré-requisitos de gravação descritos em `OPERACAO_GRAVACAO.md`.
+
+## 2026-10-30 — Empacotamento ARM64 local da Aula 5
+
+- **Alterações:** criados Dockerfile, Compose, dependências explícitas, `.dockerignore`, healthchecks, executor SQL somente leitura por stdin, testes e instruções de operação/rollback. Uma imagem atende servidor e historiador, com volume dedicado e sem painel novo. Atualizados documentos de contexto e preflight, preservando as alterações existentes.
+- **Evidências informadas por Thiago:** Pi 3 sincronizado por chrony e Pi 4 sincronizado via `10.77.0.1`; reboot não testado. Servidor, coletor e interface da Aula 4 continuam destinados à demonstração anterior; regra 8501 em memória foi relatada, mas persistência e teste final no Windows não foram comprovados. A pasta de backup antigo existe, sem evidência suficiente de integridade. Nenhuma dessas configurações foi alterada nesta ação.
+- **Build:** imagem base local ARM64 ID `sha256:67df057d42604ee3af619515afbea237b04df78a263ce5fb165a14be1519af49` continha Python 3.13.18, NumPy 2.2.6, asyncua 2.1.0 e TEP 2.5.0 na revisão fixada. Build sem rede passou; imagem final `sha256:6b64ca0effc7e6360a9483bbc3072ecfcb82c9c656d062338def1ca1fe15bee2`. Exportação e carga local do arquivo `C:\dev\iilab-aula05-export\iilab-aula05-arm64-v2.tar` passaram; SHA-256 `05c55ed1126373c9b22ea5a82626215d0134adb667b58565c63f55615bf60e8c`. O primeiro manifesto em CRLF falhou no `sha256sum -c` Linux; o manifesto `SHA256SUMS-v2-lf` foi criado sem sobrescrever o anterior e os três hashes passaram em contêiner Linux.
+- **Testes:** Compose validado; em projeto isolado e porta local 14840, descoberta interna e pela porta publicada retornou 53 tags Good com timestamp. Houve crescimento de 57 ciclos/3.021 leituras para 58/3.074 após reinício somente do historiador de teste. Posteriormente foram conferidos 74 ciclos, 3.922 leituras, 53 tags observadas, nenhum ciclo incompleto e nenhuma leitura não Good ou inválida. Consulta por arquivo funcionou no banco ativo e uma tentativa de escrita foi recusada. Os dois contêineres locais de teste foram parados e seu volume preservado.
+- **Regressão:** 28 testes da Aula 5 passaram na imagem anterior do pacote, com a mesma aplicação e healthcheck final; três testes de healthcheck e consulta stdin passaram na imagem final. O primeiro teste local do healthcheck falhou no Windows por conexão SQLite não fechada; corrigido e testes repetidos com sucesso. A primeira rede Docker automática falhou por esgotamento de pool; o teste usou sub-rede local temporária sem remover redes existentes.
+- **Pendências:** SSH não interativo via salto expirou; nenhuma transferência, `docker load`, build ou implantação foi realizada no Pi. Ainda são necessários acesso interativo, validação de backup, hash e recursos, conferência no UAExpert e teste real de descoberta, persistência e rollback no Pi. Não houve alteração de tempo, rede, firewall, serviços ou bancos do laboratório. Nenhum commit/push.
+
+## 2026-10-30 — Complemento do inventário da Aula 5
+
+- **Evidências fornecidas pelo usuário:** `tep-opc`, `coletor` e `interface` estavam na rede `aula-03_iilab`, com aliases correspondentes e IPs `172.19.0.3`, `.4` e `.2`, respectivamente. A listagem do volume mostrou `leituras.sqlite3`, `leituras.sqlite3-wal` e `leituras.sqlite3-shm`, com WAL de 4.144.752 bytes; o diretório pertencia a UID/GID 10001.
+- **Relógio:** o Pi informou 28/10/2026 13:54:19 UTC, NTP inativo e ausência de sincronização; a referência consultada nesta sessão foi 30/10/2026 21:50:46 UTC, em outro momento. A diferença exata não foi medida e os horários dos arquivos dependem do relógio do Pi.
+- **Alterações e testes:** atualizados inventário, riscos e contexto com as saídas apresentadas; verificações documentais locais. Não houve acesso remoto pelo agente, ajuste de relógio, cópia de banco, alteração de serviços ou deploy.
+- **Pendências e próxima ação:** confirmar configuração efetiva e integridade do banco, driver e demais conexões da rede, versões Python e dependências; planejar backup consistente com WAL e restauração em cópia, e tratar o relógio em etapa autorizada. A presença do WAL não comprova seu conteúdo.
+
+## 2026-10-30 — Ação 5A: inventário operacional e preflight
+
+- **Alterações:** criados inventário, análise de riscos e plano de implantação não executado em `aulas/aula-05/preflight`; contexto atualizado. Nenhuma Aula 1 a 4, configuração remota, serviço ou banco foi alterado.
+- **Evidências:** inspeção local confirmou branch `feat/aula-05-tags-sql`, HEAD `eab3cd4` e mesmo commit na branch remota via `git ls-remote`; workspace estava limpo antes da documentação. Wi-Fi local estava em `192.168.1.14`. Resultados dos Raspberry constam de saídas fornecidas pelo usuário em turnos anteriores, não de uma inspeção remota nova.
+- **Problemas e decisões:** tentativa SSH não interativa e com verificação estrita ao Pi 3 foi recusada por autenticação; não se usou acesso direto ao Pi 4 nem se tentou contornar controles. A saída anterior informava relógio do Pi 4 não sincronizado, dois arquivos Compose associados a contêineres e volume `aula-03_historico`; rede Docker atual, backup verificável e confirmação atual do banco permanecem pendentes. O usuário optou por concluir com as evidências disponíveis.
+- **Testes:** verificações documentais, inspeção de Git e roteamento local; não houve build, deploy, reinício, cópia de banco, alteração de firewall ou teste remoto de conectividade OPC UA/Streamlit. Não foram repetidos os testes locais de aplicação nesta ação.
+- **Próxima ação:** reconfirmar inventário pela sessão SSH interativa e tratar relógio, backup/restauração, capacidade e imagem da Aula 5 somente em etapas especificamente autorizadas; não avançar automaticamente para implantação.
+
+- **Reverificação na mesma data:** a branch e o HEAD `eab3cd4` continuaram iguais à referência consultada em `origin`; Wi-Fi em `192.168.1.14` e rota ao Pi 3 pela mesma interface. Nova tentativa SSH não interativa ao Pi 3 foi recusada por autenticação. Os documentos preexistentes foram preservados; nenhuma nova inspeção remota ou operação nos equipamentos ocorreu.
+
 ## 2026-10-30 — Consultas SQL do historiador da Aula 5
 
 - **Alterações:** criadas sete consultas parametrizadas, executor SQLite somente leitura, testes, roteiro de SQL e instruções para execução local, em contêiner e por SSH. Comparação de pressão, temperatura e XMV(10) usa `ciclo_id`; agregados excluem leituras inválidas.

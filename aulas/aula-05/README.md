@@ -2,6 +2,14 @@
 
 O catálogo organiza 41 medições `XMEAS(1)` a `XMEAS(41)` e 12 variáveis manipuladas `XMV(1)` a `XMV(12)`. O servidor desta pasta publica essas 53 variáveis e três variáveis legadas a partir de um único simulador. O coletor independente lê as 53 tags canônicas; um historiador separado pode gravá-las em SQLite. A implementação da Aula 4 continua independente.
 
+## Gravação concluída — evidências e material
+
+Thiago relatou a retomada da Aula 4, a parada dos três contêineres antigos preservando o volume e a subida do pacote da Aula 5 no Pi 4. A transferência foi acompanhada por saída `sha256sum -c` com três arquivos OK; a inspeção da imagem, `docker load` e a subida foram relatados por ele. Não houve inspeção remota nesta revisão.
+
+No banco ativo, o usuário relatou 14 ciclos/742 leituras e depois 17/901: três ciclos e 159 leituras adicionais, compatíveis com 53 por ciclo. Foram relatadas 53 tags cadastradas e observadas, consultas de temperatura, agregação por minuto e comparação por ciclo. A consulta de ciclos com contagem diferente de 53 retornou vazia com ciclos presentes; isso não prova ausência de lacunas ou de falhas. O healthcheck do historiador foi relatado como aprovado. Após a parada, há relato de `Exited` para o historiador; o estado dos demais contêineres não foi confirmado de forma independente.
+
+Veja [guia de estudo](GUIA_ESTUDO_CODIGO_AULA_05.md), [roteiro](ROTEIRO.md), [checklist](CHECKLIST.md), [operação e consultas no Pi](OPERACAO_GRAVACAO.md) e [preflight](preflight/INVENTARIO.md). O painel das 53 tags fica para a próxima aula. Reboot dos Pi, persistência do firewall, backup/restauração e estado atual dos serviços continuam a confirmar.
+
 `CATALOGO` é uma tupla de registros imutáveis com identificador estável, categoria (`medicao` ou `manipulada`), índice Python base zero, descrição original da biblioteca e unidade. Em cada vetor, o índice é o número da variável menos um: `XMEAS(7)` usa índice 6; `XMV(12)` usa índice 11. A ordem das medições e manipuladas é independente.
 
 `ler_tags(simulador)` usa `get_measurement_names()`, `get_mv_names()`, `get_measurements()` e `get_manipulated_vars()`. Confere os nomes, a ordem e os tamanhos antes de retornar um dicionário de identificadores e valores `float`. Uma biblioteca incompatível gera `ValueError`. O chamador inicializa e avança o simulador; a leitura não altera os valores. O dicionário é um retrato, não uma garantia de simultaneidade, qualidade ou atualização das análises amostradas.
@@ -45,7 +53,7 @@ python servidor_opc.py
 
 Conecte um cliente local a `opc.tcp://127.0.0.1:14840/tep/` e use Ctrl+C para encerrar. Confirme que a porta escolhida está livre. Se as variáveis de ambiente não forem definidas, o endpoint padrão é o histórico da Aula 4, `192.168.1.19:4840`; esse endereço não representa uma configuração atual verificada.
 
-O servidor usa `NoSecurity` e acesso anônimo, como a Aula 4: limite-o a uma rede de laboratório autorizada e não o exponha à internet. O exemplo acima usa somente loopback. Esta etapa não inclui Docker Compose ou implantação. Antes de qualquer uso no Pi 4, será necessário verificar compatibilidade ARM64, recursos, endpoint, portas, acesso e impacto sobre o servidor existente; estes aspectos não foram testados no equipamento.
+O servidor usa `NoSecurity` e acesso anônimo, como a Aula 4: limite-o a uma rede de laboratório autorizada e não o exponha à internet. O exemplo acima usa somente loopback. O pacote Compose foi testado localmente sob emulação ARM64 e sua execução no Pi foi relatada durante a gravação. A preparação, operação e rollback estão em [OPERACAO_GRAVACAO.md](OPERACAO_GRAVACAO.md). Antes de qualquer nova operação no Pi 4, confirme estado, recursos, endpoint, portas, acesso, backup e impacto sobre serviços existentes.
 
 ## Coletor das 53 tags
 

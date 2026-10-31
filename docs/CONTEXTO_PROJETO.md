@@ -1,5 +1,17 @@
 # Contexto do projeto
 
+## 2026-10-30 — Gravação da Aula 5 concluída
+
+Thiago relatou a transferência verificada por três hashes, carga da imagem e operação da Aula 5 no Pi 4. Foram observados crescimento de 14 ciclos/742 leituras para 17/901, 53 tags cadastradas e observadas, consultas ao banco ativo e nenhum ciclo com contagem diferente de 53 na consulta relatada. O historiador foi relatado como `Exited` após parada; estado dos demais contêineres não foi confirmado. Veja [Aula 5](../aulas/aula-05/README.md) e [operação](../aulas/aula-05/OPERACAO_GRAVACAO.md). As entradas hist?ricas abaixo descrevem o estado no momento de cada etapa, não o estado atual. Continuam pendentes reboot, persistência das regras, backup/restauração e validação independente do estado remoto. Painel das 53 tags fica para a próxima aula.
+
+## 2026-10-30 — Pacote ARM64 local da Aula 5
+
+Foram preparados Dockerfile, Compose, verificações de saúde e consultas somente leitura para a Aula 5. A imagem ARM64 foi construída e testada no Docker Desktop sob emulação, exportada e carregada novamente localmente; detalhes e comandos em [OPERACAO_GRAVACAO.md](../aulas/aula-05/OPERACAO_GRAVACAO.md). Não houve transferência nem implantação no Pi; a Aula 4 deve ser mostrada antes da transição autorizada. Thiago informou sincronização já corrigida entre os Pi, sem teste após reboot; não refazer a configuração. Backup anterior ainda precisa ter integridade e recuperação verificadas.
+
+## 2026-10-30 — Preflight operacional da Aula 5
+
+Foram consolidadas as saídas de inventário apresentadas pelo usuário e a inspeção local em [preflight](../aulas/aula-05/preflight/INVENTARIO.md), com riscos e plano não executado. Saída posterior fornecida pelo usuário mostrou os três serviços na rede `aula-03_iilab`, arquivos SQLite/WAL/SHM no volume e relógio do Pi 4 ainda não sincronizado. O acesso SSH não interativo ao Pi 3 foi recusado. Backup consistente, configuração efetiva do banco e validação da imagem da Aula 5 permanecem pendentes. Nenhum dispositivo ou serviço foi alterado nesta ação.
+
 ## 2026-10-30 — Consultas locais do historiador da Aula 5
 
 Foram preparadas consultas SQL parametrizadas e um executor somente leitura, com exemplos didáticos de filtros, agregações e comparação por ciclo. Em testes locais com banco temporário, o TEP avançou durante a coleta e os planos de execução foram examinados. Os exemplos são simulados; não confirmam dados ou desempenho no Pi. Veja [aulas/aula-05/sql](../aulas/aula-05/sql/).

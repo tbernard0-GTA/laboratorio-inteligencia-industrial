@@ -1,0 +1,4 @@
+# Dependências diretas verificadas na imagem base ARM64 identificada no README.
+numpy==2.2.6
+asyncua==2.1.0
+tep @ git+https://github.com/jkitchin/tennessee-eastman-profbraatz.git@9a6c8e5fcef4a2850778704e7793c87b0a187005

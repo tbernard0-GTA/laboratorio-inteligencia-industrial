@@ -1,0 +1,56 @@
+name: iilab-aula05
+
+services:
+  tep-opc:
+    image: iilab-aula05:1
+    pull_policy: never
+    command: ["python", "/app/servidor_opc.py"]
+    environment:
+      OPC_UA_BIND_HOST: "0.0.0.0"
+      OPC_UA_ADVERTISE_HOST: ${OPC_UA_ADVERTISE_HOST:?Informe o host anunciado}
+      OPC_UA_PORT: "4840"
+    ports:
+      - "${PI4_BIND_IP:?Informe o IP de bind}:${PI4_PORTA_OPC:-4840}:4840/tcp"
+    networks: [iilab]
+    init: true
+    restart: unless-stopped
+    stop_signal: SIGINT
+    healthcheck:
+      test: ["CMD", "python", "/app/healthcheck_aula05.py", "servidor"]
+      interval: 30s
+      timeout: 30s
+      start_period: 120s
+      retries: 3
+    logging:
+      driver: json-file
+      options: {max-size: "10m", max-file: "3"}
+
+  historiador:
+    image: iilab-aula05:1
+    pull_policy: never
+    command: ["python", "/app/historico_sqlite.py", "opc.tcp://tep-opc:4840/tep/", "--banco", "/data/historico_aula05.sqlite3", "--intervalo", "5"]
+    volumes:
+      - historico:/data
+    networks: [iilab]
+    depends_on:
+      tep-opc:
+        condition: service_healthy
+    init: true
+    restart: unless-stopped
+    stop_signal: SIGINT
+    healthcheck:
+      test: ["CMD", "python", "/app/healthcheck_aula05.py", "historico"]
+      interval: 30s
+      timeout: 10s
+      start_period: 120s
+      retries: 3
+    logging:
+      driver: json-file
+      options: {max-size: "10m", max-file: "3"}
+
+networks:
+  iilab:
+    driver: bridge
+
+volumes:
+  historico:

@@ -1,0 +1,13 @@
+*
+!Dockerfile
+!requirements.txt
+!catalogo_tags.py
+!servidor_opc.py
+!coletor_opc.py
+!historico_sqlite.py
+!consultar_historico.py
+!consultar_sql_stdin.py
+!healthcheck_aula05.py
+!sql/
+sql/*
+!sql/consultas.sql

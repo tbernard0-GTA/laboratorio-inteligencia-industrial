@@ -1,0 +1,51 @@
+# Inventário operacional — Aula 5 / Ação 5A
+
+> **Atualização pós-gravação — relato de Thiago:** o pacote v2 chegou ao Pi 4 com três hashes OK; carga da imagem e execução dos serviços foram relatadas. O banco passou de 14 ciclos/742 leituras a 17/901, com 53 tags cadastradas e observadas; auditoria relatada não encontrou ciclos com quantidade diferente de 53. O historiador foi relatado como `Exited` após a parada; o estado dos outros contêineres não foi confirmado. Abaixo estão os registros históricos da Ação 5A, não uma inspeção atual. Veja [operação](../OPERACAO_GRAVACAO.md).
+
+Data de referência: 30/10/2026. **CONFIRMADO** significa evidência identificada abaixo, não garantia de que o estado continue igual; **PENDENTE** significa não verificado ou precisando de atualização; **BLOQUEADOR** impede implantação segura enquanto não resolvido. As saídas dos Raspberry foram apresentadas pelo usuário em turnos anteriores desta sessão; não foram obtidas por SSH automático nesta ação. Não registrar segredos ou valores de variáveis de ambiente.
+
+## Git e código local
+
+- **CONFIRMADO — nesta ação:** branch `feat/aula-05-tags-sql`, HEAD `eab3cd446972082ec7710cb4bfec01857a081bc0`. `git ls-remote` retornou o mesmo commit na branch de `origin`, em `https://github.com/tbernard0-GTA/laboratorio-inteligencia-industrial.git`. O workspace estava limpo antes desta documentação; os dois stashes anteriores foram preservados.
+- **CONFIRMADO — inspeção anterior:** Aula 5 continha catálogo, servidor OPC UA, coletor, historiador, consultas e testes, sem Dockerfile ou Compose. **ATUALIZAÇÃO — pacote local posterior:** Dockerfile, Compose, verificações de saúde e consulta por stdin foram criados e testados sob emulação ARM64; não houve implantação no Pi. Veja `../OPERACAO_GRAVACAO.md` e o diário.
+- **CONFIRMADO — dependências locais de referência:** Aula 4 fixa NumPy 2.2.6, asyncua 2.1.0 e TEP no commit `9a6c8e5fcef4a2850778704e7793c87b0a187005`; a interface fixa Streamlit 1.50.0. Aula 3 publicada usa Python 3.12; Aula 4 usa Python 3.13 e imagens derivadas. Reaproveitar uma imagem requer confirmar versões e conteúdo efetivos no Pi.
+- **CONFIRMADO — código Aula 5:** endpoint padrão histórico `192.168.1.19:4840` não deve ser presumido; configuração usa `OPC_UA_BIND_HOST`, `OPC_UA_ADVERTISE_HOST` e `OPC_UA_PORT`. O servidor publica 53 variáveis canônicas e três legadas, com `NoSecurity`. O coletor descobre pela URI de namespace e usa leitura em lote; o historiador exige `--banco` e tem intervalo padrão de cinco segundos. Há WAL, UUID de ciclo, transação e índices; não há fila durável nem retenção automática.
+- **CONFIRMADO — composições locais:** Aula 3 publicada usa projeto `iilab-aula03`, serviço `tep-opc`, rede `industrial` e Streamlit por perfil; Aula 4 usa `tep-opc`, `coletor`, `interface`, rede `iilab` e volume `historico`. Ambas preveem 4840 e eventualmente 8501, portanto não devem ser iniciadas lado a lado sem análise. A composição ativa relatada no Pi difere dos caminhos e arquivos dessas versões publicadas.
+
+## Raspberry Pi 3 e conectividade
+
+- **CONFIRMADO — saída apresentada pelo usuário na sessão anterior:** hostname `admin`; `wlan0` `192.168.1.17/24`; `eth0` `10.77.0.1/24`; encaminhamento IPv4 `1`; rota padrão via `192.168.1.1`. A cadeia nftables `inet iilab_filter forward` estava com política `drop` e permitia novas conexões TCP `4840` de `192.168.1.14` para `10.77.0.10`, bloqueava novas conexões SSH diretas e permitia ICMP. Contadores da regra 4840 estavam em zero na saída informada.
+- **CONFIRMADO — local nesta ação:** IPv4 Wi-Fi do notebook `192.168.1.14/24`; a rota até `192.168.1.17` seleciona essa interface. Os endereços podem mudar e devem ser reconferidos antes de operação.
+- **PENDENTE — teste efetivo:** não houve nesta ação teste de ponta a ponta do OPC UA ou do Streamlit. A saída nftables não mostra regra para novas conexões encaminhadas TCP 8501; sob essas regras, a política indica bloqueio desse fluxo, mas não foi realizado teste de rede e outras condições podem afetá-lo.
+- **BLOQUEADOR — inventário automático:** `ssh` para `admin@192.168.1.17` com `BatchMode=yes`, verificação estrita de chave e tempo limitado foi recusado por `Permission denied (publickey,password)`. Não foi tentado acesso direto ao Pi 4 nem contorno de controles. O usuário relatou acesso interativo por `ssh -t -J admin@192.168.1.17 devadmin@10.77.0.10`; o inventário pode ser atualizado por essa sessão antes de implantação, sem exigir acesso automatizado.
+- **CONFIRMADO — reverificação em 30/10:** nova tentativa não interativa ao Pi 3 foi recusada por autenticação. A rota local ao Pi 3 permanecia na interface Wi-Fi `192.168.1.14`. Isso não comprova o estado remoto atual.
+
+## Raspberry Pi 4 e Docker
+
+- **CONFIRMADO — saída apresentada pelo usuário na sessão anterior:** hostname `devcontrol`; Debian 13.7; `aarch64`; Ethernet `10.77.0.10/24`; rota padrão via `10.77.0.1`; Docker cliente/servidor `26.1.5+dfsg1`; Compose `2.26.1-4`. Memória disponível reportada `7,1 GiB`; espaço livre reportado no sistema de arquivos raiz aproximadamente `3,9 GiB`. Reconfirmar recursos antes de build e operação contínua.
+- **HISTÓRICO — relógio:** a saída anterior informou `2026-10-28 13:35:16 UTC`, sem sincronização, enquanto a data de referência da sessão era 30/10/2026. A situação mudou conforme relato posterior abaixo.
+- **CONFIRMADO — saída posterior apresentada pelo usuário em 30/10:** o Pi informou `2026-10-28 13:54:19 UTC`, continuando sem sincronização e com NTP inativo. A referência UTC consultada nesta sessão foi `2026-10-30 21:50:46 UTC`; as leituras ocorreram em momentos diferentes, portanto essa comparação não mede um desvio preciso. Timestamps dos arquivos no Pi também dependem desse relógio incorreto.
+- **CONFIRMADO POR RELATO POSTERIOR — 30/10:** Thiago informou chrony ativo no Pi 3 e sincronização comprovada do Pi 4 via `10.77.0.1`, com `System clock synchronized: yes` e UTC `2026-10-30 22:49:04`. Não refazer a configuração. **PENDENTE:** verificar novamente antes da transição; persistência após reboot e sincronização automática do Windows não foram testadas.
+- **CONFIRMADO — saída apresentada:** projeto `aula-03` com `tep-opc` saudável, `coletor` ativo e `interface` saudável. O servidor publicava `10.77.0.10:4840`; a interface publicava `10.77.0.10:8501`. `4840/tcp` listado nas imagens auxiliares é metadado de exposição, não demonstra publicação adicional.
+- **CONFIRMADO — labels por contêiner:** diretório `/home/devadmin/iilab-aula03/aulas/aula-03`; servidor e coletor apontavam para `compose.yaml`, enquanto interface apontava para `compose.yaml.interface-novo`. A saída de `compose ls` listou ambos para o projeto. Não presumir que um único arquivo publicado no repositório represente a instalação efetiva.
+- **CONFIRMADO — montagens:** volume `aula-03_historico`, driver local, caminho `/var/lib/docker/volumes/aula-03_historico/_data`; montado como `/data` em leitura/escrita no coletor e somente leitura na interface. O servidor não apresentou montagem na saída fornecida.
+- **CONFIRMADO — imagens relatadas:** `iilab-tep-opc:local`, `iilab-coletor:local` e `iilab-interface:local` eram `arm64`, UID `10001`. O ID de `tep-opc` era `sha256:67df057d42604ee3af619515afbea237b04df78a263ce5fb165a14be1519af49`, igual ao da imagem local inspecionada. Não presumir que uma tag permaneça apontando para o mesmo ID.
+- **CONFIRMADO — saída posterior apresentada pelo usuário:** os três contêineres estavam na rede `aula-03_iilab`: servidor `172.19.0.3`, alias `tep-opc`; coletor `172.19.0.4`, alias `coletor`; interface `172.19.0.2`, alias `interface`. Esses IPs são observações pontuais, não endereços estáveis. **PENDENTE:** driver, propriedade `internal` e eventuais outros contêineres da rede.
+- **CONFIRMADO — listagem posterior do volume apresentada pelo usuário:** existem `leituras.sqlite3` (3.887.104 bytes), `leituras.sqlite3-wal` (4.144.752 bytes) e `leituras.sqlite3-shm` (32.768 bytes) no diretório do volume; o diretório mostra proprietário e grupo numéricos `10001`. A existência dos arquivos não confirma por si só a configuração efetiva do coletor, integridade ou conteúdo completo do banco. Tamanhos e permissões são pontuais.
+- **PENDENTE — banco e configurações:** confirmar caminho efetivamente configurado no coletor sem divulgar variáveis sensíveis, esquema e integridade atuais, hashes dos dois Compose, versões Python e pacotes nos contêineres, backup verificável e teste de recuperação. O diário de 29/10 relatou `/data/leituras.sqlite3` em WAL; a listagem posterior é coerente, mas não demonstra independentemente qual arquivo o processo abriu. O estado do contêiner não comprova saúde do conteúdo SQLite.
+
+## Comandos manuais somente de leitura — se necessário
+
+O usuário optou por concluir com as evidências já disponíveis. Em futura sessão interativa autorizada, executar no Pi 4, sem enviar senhas ou o conteúdo de `.env`:
+
+```bash
+date -u
+timedatectl status
+sudo docker inspect --format '{{.Name}} {{range $nome,$rede := .NetworkSettings.Networks}}rede={{$nome}} ip={{$rede.IPAddress}} aliases={{$rede.Aliases}} {{end}}' aula-03-tep-opc-1 aula-03-coletor-1 aula-03-interface-1
+sudo docker network inspect REDE_CONFIRMADA --format 'nome={{.Name}} driver={{.Driver}} interna={{.Internal}} {{range .Containers}}[nome={{.Name}} ipv4={{.IPv4Address}}] {{end}}'
+sudo docker exec aula-03-tep-opc-1 python -B -c 'import sys,importlib.metadata as m; print(sys.version); print("tep",m.version("tep"),"asyncua",m.version("asyncua"),"numpy",m.version("numpy"))'
+sudo ls -la /var/lib/docker/volumes/aula-03_historico/_data
+sudo sha256sum /home/devadmin/iilab-aula03/aulas/aula-03/compose.yaml /home/devadmin/iilab-aula03/aulas/aula-03/compose.yaml.interface-novo
+```
+
+Substituir `REDE_CONFIRMADA` por um dos nomes retornados pela inspeção anterior. Verificar manualmente quais arquivos do volume são o banco e seus auxiliares antes de qualquer consulta. Não executar `docker inspect` sem filtro nem imprimir `.env`; esses dados podem conter segredos. Para rotas e regras atuais do Pi 3, consultar novamente `ip -4 route show`, `cat /proc/sys/net/ipv4/ip_forward` e `sudo nft -a list ruleset` pela sessão interativa. Não alterar o sistema durante o inventário.
