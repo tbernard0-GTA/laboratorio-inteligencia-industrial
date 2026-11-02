@@ -1,5 +1,12 @@
 # Diário de bordo
 
+## 2026-11-02 — Revisão final para publicação da Aula 5
+
+- **Alterações:** incluído o acesso à Aula 5 no índice principal; preservados código funcional e materiais das Aulas 1 a 4. Preparada a integração da branch da Aula 5 à `main`.
+- **Testes e resultados:** Compose validado com endereços de exemplo, sem iniciar serviços; no Windows, 20 testes passaram e nove foram ignorados por ausência de `asyncua`, TEP ou ambiente POSIX. A execução anterior documentada nesta página aprovou os 29 testes em ARM64 emulado. A comparação com `main` não mostrou alterações nas pastas das Aulas 1 a 4; não foram identificados bancos, binários ou credenciais nos arquivos revisados para publicação.
+- **Problemas e decisões:** `git diff --check` identificou uma linha em branco adicional no fim de `servidor_opc.py`; preservado o arquivo para manter a correspondência previamente verificada com o pacote gravado. Nenhum Raspberry, serviço, volume ou banco foi acessado ou alterado nesta revisão. Estado remoto dos equipamentos, reboot e backup/restauração permanecem a confirmar.
+- **Próxima ação:** publicar a branch e, se a `main` continuar ancestral, integrá-la por fast-forward; registrar o resultado observado na resposta da sessão.
+
 ## 2026-10-30 — Revisão do material após a gravação da Aula 5
 
 - **Evidências fornecidas por Thiago:** Aula 4 exibida e seus três contêineres parados com volume preservado. Pacote v2 transferido ao Pi 4 com três hashes OK; carga da imagem e subida dos serviços relatadas. O historiador avançou de 14 ciclos/742 leituras para 17/901; relatadas 53 tags cadastradas e observadas, consultas ao banco ativo, healthcheck do histórico aprovado e nenhum ciclo com quantidade diferente de 53 na auditoria. Isso não demonstra ausência de lacunas ou qualidade perfeita. Após parada, somente `Exited` do historiador foi relatado; estado dos demais contêineres não foi confirmado nesta revisão.
