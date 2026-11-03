@@ -1,5 +1,9 @@
 # Contexto do projeto
 
+## 2026-11-02 — Aula 6, encerramento operacional relatado
+
+Thiago informou que no Pi 4 a API, `/health`, Swagger, catálogo de 53 tags e histórico SQLite real (incluindo `XMEAS(9)`) funcionaram; relatou imagem ARM64 original carregada, código montado e serviços OPC UA e historiador preservados. Também relatou restrição de novas conexões OPC UA externas após demonstração, com HTTP 8000 e coleta interna funcionando. Não foram fornecidos logs, regras ou evidência de persistência após reboot; não houve inspeção dos equipamentos nesta revisão. Uma imagem ARM64 1.0 com todos os endpoints foi construída, testada com banco temporário e exportada localmente, sem deploy. Detalhes em [Aula 6](../aulas/aula-06/README.md). As entradas abaixo preservam os estados anteriores, inclusive pendências que foram posteriormente relatadas como concluídas.
+
 ## 2026-11-02 — Revisão de fechamento da Aula 6
 
 O código local implementa FastAPI, catálogo e histórico HTTP, reutilizando as consultas SQLite somente leitura da Aula 5. O usuário confirmou `/health` e 53 tags no Swagger; na sessão anterior também foram observados 53 itens por HTTP. A última verificação disponível da rota de histórico no Pi retornou 404 antes de sua atualização; sua implantação e resposta no equipamento permanecem sem confirmação. O TAR ARM64 original contém apenas a aplicação inicial com `/health`; os endpoints posteriores estão no código editável. Não há evidência nesta revisão de alteração efetiva do firewall da Aula 6. As entradas seguintes registram estados históricos de cada etapa.

@@ -1,0 +1,5 @@
+FROM iilab-aula06-api:0.1
+USER root
+COPY api/ /opt/aula06-default/
+COPY api/ /opt/api/
+USER 10001

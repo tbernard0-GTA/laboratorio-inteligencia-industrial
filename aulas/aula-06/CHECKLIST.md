@@ -1,19 +1,23 @@
-# Checklist — Aula 6, incremento 01
+﻿# Checklist — Aula 6
 
-## Estado no fechamento
+## Concluído conforme relato da gravação
 
-- [x] `/health`, catálogo e histórico implementados; testes locais com SQLite temporário.
-- [x] `/health` e 53 tags confirmados por HTTP no Pi em sessão anterior.
-- [ ] Confirmar a versão do histórico no Pi e comparar respostas com o banco ativo.
-- [ ] Validar acesso concorrente ao WAL no ambiente real, backup/restauração e persistência após reboot.
-- [ ] Confirmar qualquer alteração de firewall e executar futuras demonstrações somente quando autorizadas.
+- [x] Imagem ARM64 original transferida e carregada no Pi 4; API independente e código editável montado.
+- [x] `/health`, Swagger, 53 tags e histórico SQLite real, incluindo `XMEAS(9)`.
+- [x] OPC UA externo antes da restrição; novas conexões externas bloqueadas depois, com HTTP e coleta interna preservados.
+- [x] Serviços da Aula 5, rede Docker e volume histórico reutilizados conforme relato do usuário.
 
-## Checklist histórico da preparação inicial
+Esses itens são relatos do usuário, não inspeção independente nesta revisão.
 
-- [x] API inicial: `/health`, `/docs`, `/openapi.json`; sem endpoints SQL.
-- [x] Compose complementar e código editável preparados.
-- [x] Leitura prevista com funções e SQL da Aula 5, banco e WAL preservados.
-- [ ] Verificar no Pi identidades, recursos, imagem, rede, volume, permissões do banco/WAL, IP e porta.
-- [ ] Transferir e validar o tar e iniciar apenas API, em incremento autorizado.
-- [ ] Testar acesso HTTP a partir do notebook e leitura concorrente do banco real.
-- [ ] Desenvolver endpoints, clientes e demonstração de firewall em etapas autorizadas.
+## Confirmado localmente
+
+- [x] Código da API reutiliza consultas da Aula 5 em conexão somente leitura; testes com bancos temporários.
+- [x] Imagem ARM64 consolidada 1.0 preparada com os endpoints; veja roteiro para os resultados e hash.
+- [x] Exemplos Python requests e coleção Postman preparados; uso na gravação não comprovado.
+
+## Ainda a validar
+
+- [ ] Persistência das regras e dos serviços após reboot.
+- [ ] Integridade de backup e restauração em cópia.
+- [ ] Autenticação, HTTPS/TLS e segurança adequados ao ambiente de produção.
+- [ ] Estado atual efetivo dos equipamentos, regras, permissões de WAL/SHM e recuperação.

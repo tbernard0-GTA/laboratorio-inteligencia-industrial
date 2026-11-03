@@ -1,5 +1,9 @@
 # Arquitetura do laboratório
 
+## Aula 6 — fluxo relatado na gravação
+
+O usuário relatou API FastAPI em contêiner independente no Pi 4, lendo o volume SQLite da Aula 5 somente para leitura e usando código montado; servidor OPC UA e historiador permaneceram ativos. Relatou ainda bloqueio de novas conexões OPC UA externas através do Pi 3, com acesso HTTP na porta 8000 e coleta interna preservados. Essa descrição é relato da gravação, não inspeção atual das regras ou dos serviços. Persistência após reinício permanece sem evidência; os fluxos e limites didáticos estão na [Aula 6](../aulas/aula-06/README.md).
+
 > Atualização de 29/10/2026: este documento preserva o histórico das etapas anteriores. A Aula 4 e seu estado comprovado ou pendente estão em [aulas/aula-04](../aulas/aula-04/) e nas entradas recentes do diário. Dados e planos históricos abaixo não comprovam o estado atual dos equipamentos.
 
 

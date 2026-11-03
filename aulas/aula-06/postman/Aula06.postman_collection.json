@@ -1,0 +1,16 @@
+{
+  "info": {
+    "name": "Industrial Intelligence Lab - Aula 06",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {"key": "base_url", "value": "http://localhost:8000"},
+    {"key": "tag", "value": "XMEAS(9)"},
+    {"key": "limite", "value": "5"}
+  ],
+  "item": [
+    {"name": "Saúde", "request": {"method": "GET", "url": {"raw": "{{base_url}}/health", "host": ["{{base_url}}"], "path": ["health"]}}},
+    {"name": "Tags", "request": {"method": "GET", "url": {"raw": "{{base_url}}/api/v1/tags", "host": ["{{base_url}}"], "path": ["api", "v1", "tags"]}}},
+    {"name": "Histórico", "request": {"method": "GET", "url": {"raw": "{{base_url}}/api/v1/historico?tag={{tag}}&limite={{limite}}", "host": ["{{base_url}}"], "path": ["api", "v1", "historico"], "query": [{"key": "tag", "value": "{{tag}}"}, {"key": "limite", "value": "{{limite}}"}]}}}
+  ]
+}

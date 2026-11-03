@@ -1,5 +1,33 @@
 # Roteiro para implantação futura — não executado neste incremento
 
+## Reprodução futura com imagem consolidada 1.0
+
+A primeira implantação da imagem 0.1 e a execução com código montado foram relatadas pelo usuário como concluídas na gravação. Os comandos abaixo são uma referência para uma nova operação autorizada; o estado atual dos Pi, regras e serviços não foi inspecionado nesta revisão. A imagem 1.0 foi construída e testada somente no notebook e ainda não foi implantada no Pi.
+
+A imagem local `iilab-aula06-api:1.0` incorpora os endpoints em `/opt/api` e `/opt/aula06-default`. Exportação: `C:\dev\iilab-aula06-export\iilab-aula06-api-arm64-v2.tar`, 285.293.568 bytes; SHA-256 `c33de100d7beb4c72c4a0dd4e45836beeabe4328743f260e2d42868e03ad8214`; ID `sha256:c0999745951fd8422ba72e64d76e4da25fa176018478c16bc88b19788a48d7f5`; `linux/arm64`. Manifesto `SHA256SUMS-v2` está no mesmo diretório externo ao Git. Cinco testes da Aula 6 passaram sob emulação com banco temporário e sem montar o código; 16 testes de regressão selecionados da Aula 5 passaram. O TAR inclui as camadas e foi carregado novamente no notebook.
+
+Build reproduzível a partir da base local identificada no pacote anterior, sem rede, após verificar a identidade da base e que a tag 1.0 não conflita:
+
+```powershell
+docker image inspect iilab-aula06-api:0.1 --format '{{.Id}} {{.Os}}/{{.Architecture}}'
+# Esperado: sha256:bc8bc3e951a14c388cdbf34dec2ec348531f0cb981363c2bbbc9522a72a73faa linux/arm64
+docker buildx build --platform linux/arm64 --network none --load -f aulas/aula-06/Dockerfile.final -t iilab-aula06-api:1.0 aulas/aula-06
+```
+
+Para um novo Pi autorizado, confirme recursos, identidades SSH, rede, volume, permissões WAL/SHM e ausência de conflitos conforme o inventário histórico abaixo. Transfira o TAR v2 por salto, confira o hash no destino antes de `docker load`, e confira ID e arquitetura. A carga modifica imagens locais; não substitua uma tag diferente já existente. Sem montagem de código, com `IP`, `REDE` e `VOLUME` realmente confirmados e o nome de contêiner livre, a execução isolada seria:
+
+```bash
+sudo docker network inspect "$REDE" >/dev/null && sudo docker volume inspect "$VOLUME" >/dev/null && \
+sudo docker run -d --pull never --name iilab-aula06-api --init --restart unless-stopped \
+  --network "$REDE" -p "$IP:8000:8000/tcp" \
+  --mount "type=volume,src=$VOLUME,dst=/data,readonly,volume-nocopy" \
+  -e BANCO_HISTORICO=/data/historico_aula05.sqlite3 iilab-aula06-api:1.0
+```
+
+Verifique o `docker inspect` do contêiner, saúde e consultas. Não execute esse exemplo sobre o contêiner da gravação, nem deixe Docker criar um volume desconhecido. O código interno pode ser extraído de `/opt/aula06-default` com o procedimento histórico abaixo e montado em `/opt/api` para edição futura; a montagem substitui o código interno. Não altere outros serviços, firewall ou dados por inferência.
+
+## Instalação original da gravação — referência histórica
+
 A autorização para esta preparação não autoriza executar os comandos abaixo. Antes de uma implantação, confirme identidades SSH e o acesso via Pi 3; inventarie serviços, imagem, rede, volume, porta, espaço e permissões, sem parar ou alterar a Aula 5. Os nomes e endereços anteriores são históricos, não prova do estado atual. Confirme um caminho de recuperação. Se algum item divergir, pare. A API não tem autenticação ou TLS; mantenha acesso limitado à rede autorizada.
 
 ## Pacote local preparado
@@ -119,7 +147,7 @@ sudo docker restart iilab-aula06-api
 sudo docker logs --tail 100 iilab-aula06-api
 ```
 
-Valide novamente HTTP. Os endpoints de dados, o teste do banco ativo em WAL e mudanças de firewall pertencem a etapas posteriores autorizadas.
+Valide novamente HTTP. Os endpoints de dados e a demonstração de firewall foram relatados como concluídos na gravação; a validação futura do estado atual e qualquer mudança exigem autorização específica.
 
 Para sincronizar uma edição futura a partir do notebook, após confirmar que o destino é a cópia editável conhecida e preservar sua versão anterior, execute no PowerShell:
 

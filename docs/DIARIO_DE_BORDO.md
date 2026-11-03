@@ -1,5 +1,13 @@
 # Diário de bordo
 
+## 2026-11-02 — Aula 6, fechamento operacional e reprodutibilidade
+
+- **Relato de Thiago:** no Pi 4, imagem ARM64 original carregada e API independente com código montado; `/health`, Swagger, 53 tags e consulta do histórico real para `XMEAS(9)` funcionaram. Servidor OPC UA, historiador, rede e volume foram preservados. Após demonstração OPC UA externa, novas conexões externas foram restringidas e HTTP 8000 e coleta interna permaneceram funcionais. Não foram apresentados logs, regras efetivas ou teste de persistência após reinicialização.
+- **Alterações locais:** documentação e checklist atualizados, exemplos de cliente `requests` e coleção Postman criados, imagem ARM64 1.0 com todos os endpoints construída a partir da 0.1 sem rede, exportada e carregada no notebook; TAR e manifesto ficam fora do Git. A imagem original v1 contém apenas `/health`; não foi substituída. As Aulas 1 a 5 não foram modificadas.
+- **Testes:** cinco testes da API passaram na 1.0 sob emulação sem montagem de código; 16 testes selecionados da Aula 5 passaram; Compose combinado preservou serviços, rede e volumes. Cliente `requests` executado contra servidor sintético local e coleção Postman validada como JSON com três GETs. Nenhum banco real foi usado localmente.
+- **Limitações e decisões:** nenhum acesso aos Raspberry ou modificação de firewall ocorreu nesta revisão; a imagem 1.0 não foi implantada. Persistência após reboot, recuperação de backups e segurança de produção permanecem a validar. As confirmações de operação no Pi são relato do usuário, não observação independente.
+- **Próxima ação:** publicar o material após conferência Git; propor o próximo desenvolvimento somente em etapa separada.
+
 ## 2026-11-02 — Revisão Git de fechamento da Aula 6
 
 - **Alterações:** revisão da API, testes, Compose, Dockerfile e documentação; índice e documentos atualizados com o estado dos endpoints, evidências relatadas e limitações do TAR original. Nenhum código funcional ou material das Aulas 1 a 5 foi alterado nesta revisão.
