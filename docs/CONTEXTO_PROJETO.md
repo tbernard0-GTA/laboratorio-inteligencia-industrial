@@ -1,5 +1,21 @@
 # Contexto do projeto
 
+## 2026-11-02 — Revisão de fechamento da Aula 6
+
+O código local implementa FastAPI, catálogo e histórico HTTP, reutilizando as consultas SQLite somente leitura da Aula 5. O usuário confirmou `/health` e 53 tags no Swagger; na sessão anterior também foram observados 53 itens por HTTP. A última verificação disponível da rota de histórico no Pi retornou 404 antes de sua atualização; sua implantação e resposta no equipamento permanecem sem confirmação. O TAR ARM64 original contém apenas a aplicação inicial com `/health`; os endpoints posteriores estão no código editável. Não há evidência nesta revisão de alteração efetiva do firewall da Aula 6. As entradas seguintes registram estados históricos de cada etapa.
+
+## 2026-11-02 — Aula 6, histórico HTTP
+
+Preparado localmente `GET /api/v1/historico` com a consulta predefinida do historiador, sem alterar a Aula 5. O usuário relatou a API e os serviços ativos; nesta sessão, `/health` respondeu e o catálogo retornou 53 tags, enquanto a rota de histórico ainda retornou 404. SSH não interativo via salto expirou; a atualização e a verificação da rota no Pi dependem de execução interativa. O retorno de amostras, por si só, não demonstra dados recentes.
+
+## 2026-11-02 — Aula 6, rota de catálogo
+
+Implementado localmente `GET /api/v1/tags` usando a consulta predefinida do SQLite da Aula 5; listar cadastro não comprova leituras atuais. O usuário relatou a API ativa no Pi e `/health` acessível; HTTP 200 foi observado no notebook. A tentativa SSH não interativa pelo salto expirou; transferência e validação real da nova rota permanecem pendentes de execução interativa. Não houve alteração remota nesta etapa.
+
+## 2026-11-02 — Preparação local da Aula 6
+
+A branch `feat/aula-06-fastapi` contém preparação local sem commit: API com `/health`, documentação automática e Compose complementar. A imagem ARM64 foi construída, exportada, recarregada e testada localmente sob emulação; detalhes em [Aula 6](../aulas/aula-06/README.md) e [roteiro](../aulas/aula-06/ROTEIRO_IMPLANTACAO.md). Endpoints de dados e alterações de firewall são planejados, não implementados. Nenhum Raspberry foi acessado; rede, permissões e leitura concorrente do banco real permanecem a validar em operação autorizada.
+
 ## 2026-10-30 — Gravação da Aula 5 concluída
 
 Thiago relatou a transferência verificada por três hashes, carga da imagem e operação da Aula 5 no Pi 4. Foram observados crescimento de 14 ciclos/742 leituras para 17/901, 53 tags cadastradas e observadas, consultas ao banco ativo e nenhum ciclo com contagem diferente de 53 na consulta relatada. O historiador foi relatado como `Exited` após parada; estado dos demais contêineres não foi confirmado. Veja [Aula 5](../aulas/aula-05/README.md) e [operação](../aulas/aula-05/OPERACAO_GRAVACAO.md). As entradas hist?ricas abaixo descrevem o estado no momento de cada etapa, não o estado atual. Continuam pendentes reboot, persistência das regras, backup/restauração e validação independente do estado remoto. Painel das 53 tags fica para a próxima aula.

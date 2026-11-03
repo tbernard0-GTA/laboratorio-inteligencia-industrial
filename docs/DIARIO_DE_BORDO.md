@@ -1,5 +1,33 @@
 # Diário de bordo
 
+## 2026-11-02 — Revisão Git de fechamento da Aula 6
+
+- **Alterações:** revisão da API, testes, Compose, Dockerfile e documentação; índice e documentos atualizados com o estado dos endpoints, evidências relatadas e limitações do TAR original. Nenhum código funcional ou material das Aulas 1 a 5 foi alterado nesta revisão.
+- **Testes:** cinco testes da Aula 6 e 16 testes selecionados de catálogo, consultas e historiador da Aula 5 passaram na imagem ARM64 existente sob emulação, sem testes ignorados. Compose combinado validado e comparado com a configuração original: serviços, redes e volumes preservados. Os testes usaram bancos temporários; não houve acesso aos Raspberry.
+- **Problemas e decisões:** `/health` e 53 tags foram confirmados anteriormente; a última resposta observada para histórico no Pi foi 404 antes da atualização e não há confirmação posterior. O TAR v1 contém apenas `/health`; os endpoints foram desenvolvidos depois no código montado. Nenhuma alteração de firewall da Aula 6 foi comprovada nesta revisão.
+- **Próxima ação:** publicar a branch e integrar por fast-forward após conferência do conteúdo; validar histórico no Pi e eventuais mudanças de firewall apenas em etapa autorizada.
+
+## 2026-11-02 — Aula 6, histórico HTTP
+
+- **Alterações:** criada localmente a rota `/api/v1/historico`, usando `abrir_leitura` e a consulta parametrizada `amostras` existente; tag obrigatória, catálogo validado, limite de 1 a 200 e resposta genérica para falha de histórico. As aulas anteriores e os dados existentes foram preservados.
+- **Testes:** cinco testes passaram na imagem ARM64 existente sob emulação, incluindo catálogo, saúde, ordenação, amostra de mais de 24 horas, JSON com `null`, limite padrão, extremos e entradas inválidas, tag desconhecida, banco ausente e incompatível. A resposta real do Pi para `/health` foi 200 e o catálogo retornou 53 tags; a rota nova ainda retornou 404.
+- **Problemas e decisões:** SSH não interativo via Pi 3 expirou durante o banner; nenhum arquivo remoto foi alterado e nenhum contêiner reiniciado. A consulta usa janela explícita ampla para não descartar amostras com mais de 24 horas. A ordem por horário de coleta decrescente não define desempate. Sem acesso ao banco real nesta etapa, a comparação com os dados ativos ainda não foi realizada.
+- **Próxima ação:** preservar backup específico do arquivo remoto atual, transferir e reiniciar somente a API por sessão interativa autorizada e comparar o endpoint com a consulta somente leitura no banco ativo.
+
+## 2026-11-02 — Aula 6, catálogo HTTP
+
+- **Alterações:** `GET /api/v1/tags` implementado localmente com `abrir_leitura()` e `executar(db, "tags")`, fechando a conexão e retornando 503 genérico em falhas do banco. Documentação e testes atualizados; Aulas 1 a 5 preservadas.
+- **Testes:** quatro testes passaram na imagem existente ARM64 sob emulação, incluindo 53 tags em banco temporário, JSON, OpenAPI, saúde, WAL e falha de acesso. A primeira execução excedeu o prazo de inicialização do Uvicorn; o prazo do teste foi ampliado e a suíte passou. No Pi, `/health` respondeu HTTP 200 e a nova rota ainda retornou 404.
+- **Problemas e decisões:** SSH não interativo via salto expirou durante o banner. Nenhuma cópia, atualização ou reinício remoto ocorreu; o usuário pode executar o procedimento interativo após verificar destino e backup. O usuário relata API e serviços ativos; somente a resposta HTTP foi verificada nesta sessão. O catálogo não confirma leituras recentes.
+- **Próxima ação:** transferir o arquivo testado, reiniciar somente a API e confirmar `/health` e contagem real de `/api/v1/tags` pela sessão autorizada.
+
+## 2026-11-02 — Aula 6, preparação local FastAPI
+
+- **Alterações:** branch `feat/aula-06-fastapi` criada a partir de `c759e70`; criada API com `/health`, testes, imagem, Compose complementar, documentação e roteiro. Funções e SQL da Aula 5 são reutilizados na imagem, sem modificação das aulas anteriores. Nenhum endpoint SQL foi implementado.
+- **Testes e resultados:** Compose combinado validado, com serviços anteriores, rede e volumes equivalentes à configuração original. Build ARM64 com Buildx e `pip check` aprovado. Imagem exportada, carregada e executada sob emulação, com HTTP 200 para health, docs e OpenAPI; dois testes passaram, incluindo leitura SQLite temporária em WAL, validação de identificação, fechamento, recusa de escrita e banco ausente. Módulos da Aula 5 na imagem coincidem com os arquivos locais após normalização de finais de linha. O tar e hash estão no roteiro da Aula 6, fora do repositório.
+- **Problemas e decisões:** leitura do banco real, acesso ao WAL/SHM por montagem somente leitura e conectividade entre redes não foram verificados; `/health` não testa o banco. Nenhum Raspberry, firewall, serviço ou volume existente foi alterado. A imagem e roteiro não comprovam o estado atual do Pi.
+- **Próxima ação:** em incremento autorizado, inventariar recursos, permissões e estado real, transferir o tar e validar implantação controlada apenas da API, sem alterar os serviços anteriores.
+
 ## 2026-11-02 — Revisão final para publicação da Aula 5
 
 - **Alterações:** incluído o acesso à Aula 5 no índice principal; preservados código funcional e materiais das Aulas 1 a 4. Preparada a integração da branch da Aula 5 à `main`.

@@ -11,6 +11,7 @@ Este repositório reúne as aulas do laboratório. É o início do projeto: a id
 - **Aula 03:** [Docker e Docker Compose para TEP e OPC UA](aulas/aula-03/) — comandos, código e roteiro; Streamlit separado como complemento.
 - **Aula 04:** [Coleta OPC UA, histórico SQLite e interface Streamlit](aulas/aula-04/).
 - **Aula 05:** [Catálogo de 53 tags TEP, coleta OPC UA e consultas SQL](aulas/aula-05/).
+- **Aula 06:** [API FastAPI para catálogo e histórico SQLite](aulas/aula-06/).
 
 ## Aula 01 — Do zero ao OPC UA com TEP
 

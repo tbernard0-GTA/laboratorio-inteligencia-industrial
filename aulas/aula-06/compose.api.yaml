@@ -1,0 +1,20 @@
+﻿services:
+  api:
+    image: iilab-aula06-api:0.1
+    pull_policy: never
+    init: true
+    restart: unless-stopped
+    ports:
+      - "${PI4_BIND_IP:?Informe o IP de bind}:8000:8000/tcp"
+    environment:
+      BANCO_HISTORICO: /data/historico_aula05.sqlite3
+    volumes:
+      - historico:/data:ro
+      - type: bind
+        source: ${AULA06_API_DIR:?Informe o caminho absoluto do código editável}
+        target: /opt/api
+        read_only: true
+    networks: [iilab]
+    logging:
+      driver: json-file
+      options: {max-size: "10m", max-file: "3"}
